@@ -61,11 +61,13 @@ assert xor(True, False)
 assert xor(False, True)
 assert not xor(False, False)
 
+
 # Q6. Write a Python program to display the current date and time under standard ISO 8601. e.g. 2021-12-03T10:15:30Z
 
 def get_current_time() -> str:
     return ""
-    
+
+
 assert "T" in get_current_time()
 assert "Z" in get_current_time()
 assert 20 == len(get_current_time())
