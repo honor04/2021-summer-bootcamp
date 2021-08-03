@@ -7,14 +7,13 @@
 
 
 def factorial(x: int) -> int:
-    num=1
+    num = 1
     if x == 0:
         return 1
     else:
-        for i in range(1,x+1):
-            num = i*num
+        for i in range(1, x + 1):
+            num = i * num
     return num
-
 
 
 assert factorial(0) == 1
@@ -26,7 +25,7 @@ assert factorial(9) == 362880
 # [1 + 2 + ... + x] and x is always >= 1.
 
 def print_sum(x: int) -> str:
-    a = (1+x)*x//2
+    a = (1 + x) * x // 2
     return str(a)
 
 
@@ -38,13 +37,12 @@ assert print_sum(5) == "15"
 # Q3. Write a program to check is a year is leap year (x is always > 0)
 
 def is_leap_year(year: int) -> bool:
-    if year%400 == 0:
+    if year % 400 == 0:
         return True
-    elif year%4 == 0 and year%100 != 0:
+    elif year % 4 == 0 and year % 100 != 0:
         return True
     else:
         return False
-
 
 
 assert is_leap_year(2000)
@@ -56,7 +54,7 @@ assert not is_leap_year(2001)
 # Q4. Write a program to convert a list of lowercase words to uppercase words.
 
 def to_upper_case(words: [str]) -> [str]:
-    return  list(map(lambda x: x.upper(), words))
+    return list(map(lambda x: x.upper(), words))
 
 
 assert to_upper_case(["abc", "de"]) == ["ABC", "DE"]
@@ -79,12 +77,29 @@ assert not xor(False, False)
 # Q6. Write a Python program to display the current date and time under standard ISO 8601. e.g. 2021-12-03T10:15:30Z
 
 def get_current_time() -> str:
-    return ""
+    import datetime
+    today = datetime.date.today()
+    time = datetime.datetime.now().time().replace(microsecond=0)
+    a = str(today) + "T" + str(time) + "Z"
+    return a
 
 
 assert "T" in get_current_time()
 assert "Z" in get_current_time()
 assert 20 == len(get_current_time())
 
+
 # Q7. Write a Python program to sum of two given integers. However, if the sum is between 15 to 20 it will return 20
 # please define function and test yourself.
+
+def sum_1(x: int, y: int) -> int:
+    summ = x + y
+    if summ in range(15, 20):
+        return 20
+    else:
+        return summ
+
+
+assert sum_1(5, 10) == 20
+assert sum_1(10, 10) == 20
+assert sum_1(100, 100) == 200
