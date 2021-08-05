@@ -63,10 +63,7 @@ assert to_upper_case(["Amazon", "Apple"]) == ["AMAZON", "APPLE"]
 # https://baike.baidu.com/item/%E5%BC%82%E6%88%96/10993677?fromtitle=xor&fromid=64178
 
 def xor(a: bool, b: bool) -> bool:
-    if a != b:
-        return True
-    else:
-        return False
+    return a != b:
 
 
 assert not xor(True, True)
