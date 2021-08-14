@@ -37,12 +37,7 @@ assert print_sum(5) == "15"
 # Q3. Write a program to check is a year is leap year (x is always > 0)
 
 def is_leap_year(year: int) -> bool:
-    if year % 400 == 0:
-        return True
-    elif year % 4 == 0 and year % 100 != 0:
-        return True
-    else:
-        return False
+    return year % 400 == 0 or (year % 4 == 0 and year % 100 != 0)
 
 
 assert is_leap_year(2000)
@@ -77,11 +72,8 @@ assert not xor(False, False)
 # Q6. Write a Python program to display the current date and time under standard ISO 8601. e.g. 2021-12-03T10:15:30Z
 
 def get_current_time() -> str:
-    import datetime
-    today = datetime.date.today()
-    time = datetime.datetime.now().time().replace(microsecond=0)
-    a = str(today) + "T" + str(time) + "Z"
-    return a
+    from datetime import datetime
+    return datetime.now().strftime('%Y-%m-%dT%H:%M:%SZ')
 
 
 assert "T" in get_current_time()
