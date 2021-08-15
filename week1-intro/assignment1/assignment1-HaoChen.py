@@ -8,12 +8,24 @@
 
 def factorial(x: int) -> int:
     num = 1
-    if x == 0:
+    if x <= 0:
         return 1
-    else:
-        for i in range(1, x + 1):
-            num = i * num
+
+    for i in range(1, x + 1):
+        num = i * num
     return num
+
+
+assert factorial(0) == 1
+assert factorial(1) == 1
+assert factorial(9) == 362880
+
+
+def factorial(x: int) -> int:
+    if x <= 0:
+        return 1
+
+    return x * factorial(x - 1)
 
 
 assert factorial(0) == 1
@@ -25,8 +37,7 @@ assert factorial(9) == 362880
 # [1 + 2 + ... + x] and x is always >= 1.
 
 def print_sum(x: int) -> str:
-    a = (1 + x) * x // 2
-    return str(a)
+    return str(sum(range(x + 1)))
 
 
 assert print_sum(1) == "1"
@@ -60,7 +71,7 @@ assert to_upper_case(["Amazon", "Apple"]) == ["AMAZON", "APPLE"]
 # https://baike.baidu.com/item/%E5%BC%82%E6%88%96/10993677?fromtitle=xor&fromid=64178
 
 def xor(a: bool, b: bool) -> bool:
-    return (((not a) and b) or (a and (not b)))
+    return ((not a) and b) or (a and (not b))
 
 
 assert not xor(True, True)
@@ -85,11 +96,11 @@ assert 20 == len(get_current_time())
 # please define function and test yourself.
 
 def sum_1(x: int, y: int) -> int:
-    summ = x + y
-    if summ in range(15, 20):
+    summa = x + y
+    if summa in range(15, 20):
         return 20
     else:
-        return summ
+        return summa
 
 
 assert sum_1(5, 10) == 20
