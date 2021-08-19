@@ -14,8 +14,8 @@ assert rotate([1, 2, 3, 4, 5, 6, 7], 2) == [3, 4, 5, 6, 7, 1, 2]
 assert rotate([1, 2, 3], 4) == [2, 3, 1]
 
 
-def rotation(arr: [int]) -> [int]:
-    for i in range(len(arr) // 2):
+def rotation(arr: [int]，start: int, end: int ) -> None:
+    while end < start:
         Inter_1 = arr[i]
         arr[i] = arr[len(arr) - 1 - i]
         arr[len(arr) - 1 - i] = Inter_1
