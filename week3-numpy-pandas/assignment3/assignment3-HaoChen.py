@@ -13,6 +13,8 @@ y = [4, 5, 6]
 cross(x, y)
 > [12, -6, -3]
 """
+import pandas as pd
+import numpy as np
 def crossproduct (x:list, y:list):
     return [x[1] * y[2] - y[1] * x[2], - x[0] * y[2] + y[0] * x[2], x[0] * y[1] - y[0] * x[1]]
 
@@ -77,7 +79,11 @@ def slowest(orders: [[int]]) -> int:
     while i > 0:
         orders[i][1] = orders[i][1] - orders[i-1][1]
         i -= 1
-    return orders
+    df = pd.DataFrame(orders, columns=['id', 'time'])
+    df_sum = df.groupby('id').sum()
+    print(df_sum)
+    min = df_sum.idxmin()
+    return df_sum.iloc[min, 0]
 print(slowest([[0, 2], [1, 5], [2, 7], [0, 16], [3, 19], [4, 25], [2, 35]]))
 
 
@@ -94,11 +100,19 @@ print(slowest([[0, 2], [1, 5], [2, 7], [0, 16], [3, 19], [4, 25], [2, 35]]))
 2. moves = "LL", return False.
 3. moves = "RRDD", return False.
 4. moves = "LDRRLRUULR", return False.
-
-def judgeRobotMove(moves: str) -> bool:
-
 """
-
+def judgeRobotMove (moves: str) -> bool:
+    u = moves.count("U")
+    d = moves.count("D")
+    l = moves.count("L")
+    r = moves.count("R")
+    v = u == d
+    p = l == r
+    return v and p
+print(judgeRobotMove("UD"))
+print(judgeRobotMove("LL"))
+print(judgeRobotMove("RRDD"))
+print(judgeRobotMove("LDRRLRUULR"))
 # Q5
 """
 写一个验证email格式的程序， 对于给定的string监查是不是一个email地址:
@@ -109,3 +123,20 @@ def judgeRobotMove(moves: str) -> bool:
 
 可以使用regex或者python标准包的方法。
 """
+def JudgeEmail (email: str) -> bool:
+    num = [chr(a) for a in range(97, 123)]
+    low_letter = [chr(b) for b in range(48, 58)]
+    sym = ["-", "/" , "." , "_", "@"]
+    for i in range(len(email)):
+        if email[i] in num + low_letter + sym:
+            if email[i] == '@':
+                three = not(email[i-1] == ' ' and email[i+1] == ' ')
+            continue
+        else:
+            return False
+    two = email.count('@') == 1
+    four = email[-4::] == ".edu" or email[-4::] == ".com"
+    return two and three and four
+
+print(JudgeEmail("1a_@.com"))
+
