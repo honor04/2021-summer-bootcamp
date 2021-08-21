@@ -14,7 +14,9 @@ cross(x, y)
 > [12, -6, -3]
 """
 def crossproduct (x:list, y:list):
-    return
+    return [x[1] * y[2] - y[1] * x[2], - x[0] * y[2] + y[0] * x[2], x[0] * y[1] - y[0] * x[1]]
+
+print(crossproduct([1, 2, 0], [4, 5, 6]))
 # Q2.
 """
 交易传输指令经常需要验证完整性，比如以下的例子
@@ -34,11 +36,24 @@ def crossproduct (x:list, y:list):
 """
 
 def check(order: str) -> bool:
-    return not ["(" in order ^ ")" in order] and ["[" in order ^ "]" in order] and ["{" in order ^ "}" in order]
+    s_l = "(" in order
+    s_r = ")" in order
+    m_l = "[" in order
+    m_r = "]" in order
+    l_l = "{" in order
+    l_r = "}" in order
+    s = not (s_r ^ s_l)
+    m = not (m_r ^ m_l)
+    l = not (l_r ^ l_l)
+    return s and m and l
 
- def checkOrders(orders: [str]) -> [bool]:
- return a list of True or False.
-checkOrders(["()", "(", "{}[]", "[][][]", "[{]{]"] return [True, False, True, True, False]
+def checkOrders(orders: [str]) -> [bool]:
+    for i in range(len(orders)):
+        orders[i] = check(orders[i])
+    return orders
+
+
+print(checkOrders(["()", "(", "{}[]", "[][][]", "[{]{]"]))
 
 
 # Q3
@@ -56,11 +71,15 @@ Broker 3 使用了19-16=3s
 Broker 4 使用了25-19=6s
 Broker 2 使用了35-25=10s
 综合表现，是broker2出现了最慢的交易表现。
-
-Def slowest(orders: [[int]]) -> int:
-
-slowest([[0, 2], [1, 5], [2, 7], [0, 16], [3, 19], [4, 25], [2, 35]]) return 2
 """
+def slowest(orders: [[int]]) -> int:
+    i = len(orders) - 1
+    while i > 0:
+        orders[i][1] = orders[i][1] - orders[i-1][1]
+        i -= 1
+    return orders
+print(slowest([[0, 2], [1, 5], [2, 7], [0, 16], [3, 19], [4, 25], [2, 35]]))
+
 
 
 # Q4
