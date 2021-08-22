@@ -40,8 +40,9 @@ def test_upsert_rate():
     upsert_client_rate("client_id", "rate")
 # -- TODO END: Part 6
 
+
 # DO NOT DELETE
 if __name__ == '__main__':
-    # test_get_rate()
-    test_upsert_rate()
+    test_get_rate()
+    # test_upsert_rate()
     # you can add your test functions here
