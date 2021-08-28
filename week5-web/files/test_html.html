@@ -1,0 +1,1645 @@
+<!DOCTYPE html>
+<html xmlns:itranswarp="http://www.itranswarp.com/" xmlns:wb="https://open.weibo.com/wb" lang="zh_CN">
+<!--
+-->
+<head>
+	<meta charset="utf-8" />
+	<title>HTTP协议简介 - 廖雪峰的官方网站</title>
+	<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+	<meta name="viewport" content="width=device-width" />
+	<meta name="keywords" content="javascript,node,jquery,git,python,java,sql,linux,bitcoin,教程,软件,编程,开发,运维,云计算,网络,互联网,比特币,数字货币" />
+	<meta name="description" content="研究互联网产品和技术，提供原创中文精品教程" />
+	<meta property="x-nav" content=" /wiki/1016959663602400 " />
+
+
+
+	    <meta property="og:ad" content="true" />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content="https://www.liaoxuefeng.com/wiki/1016959663602400/1017804782304672" />
+    <meta property="og:title" content="HTTP协议简介" />
+    <meta property="og:description" content="小白的Python新手教程，基于最新的Python 3！" />
+    <meta property="og:image" content="https://www.liaoxuefeng.com/files/attachments/1273080918484320/l" />
+    <meta property="og:tag" content="python" />
+
+	<!-- BEGIN CSS -->
+	<link rel="stylesheet" href="/static/css/codemirror.css" />
+	<link rel="stylesheet" href="/static/css/highlight.css" />
+	<link rel="stylesheet" href="/static/css/katex.css" />
+	<link rel="stylesheet" href="/static/css/simditor.css" />
+	<link rel="stylesheet" href="/static/css/main.css?v=1.0-78696de-2020-04-10T02:25:52Z" />
+	<!-- END CSS -->
+	<!-- BEGIN JAVASCRIPT -->
+	<script src="/static/js/3rdparty/jquery.js"></script>
+	<script src="/static/js/3rdparty/underscore.js"></script>
+	<script src="/static/js/3rdparty/moment-with-locales.min.js"></script>
+	<script src="/static/js/3rdparty/marked.js"></script>
+	<script src="/static/js/3rdparty/codemirror.js"></script>
+	<script src="/static/js/3rdparty/highlight.js"></script>
+	<script src="/static/js/3rdparty/katex.js"></script>
+	<script src="/static/js/3rdparty/module.js"></script>
+	<script src="/static/js/3rdparty/hotkeys.js"></script>
+	<script src="/static/js/3rdparty/uploader.js"></script>
+	<script src="/static/js/3rdparty/simditor.js"></script>
+	<script src="/static/js/3rdparty/turndown.js"></script>
+	<script src="/static/js/uikit/uikit.js"></script>
+	<script src="/static/js/uikit/components/tooltip.js"></script>
+	<script src="/static/js/uikit/components/slideshow.js"></script>
+	<script src="/static/js/uikit/components/datepicker.js"></script>
+	<script src="/static/js/uikit/components/autocomplete.js"></script>
+	<script src="/static/js/uikit/components/notify.js"></script>
+	<script src="/static/js/uikit/components/lightbox.js"></script>
+	<script src="/static/js/uikit/components/htmleditor.js"></script>
+	<!-- END JAVASCRIPT -->
+	<script src="/static/js/shared.js?v=1.0-78696de-2020-04-10T02:25:52Z"></script>
+	<script src="/static/js/itranswarp.js?v=1.0-78696de-2020-04-10T02:25:52Z"></script>
+	<script src="/static/js/extension.js?v=1.0-78696de-2020-04-10T02:25:52Z"></script>
+
+	<!-- comment template -->
+
+<script id="tplComment" type="text/plain">
+	<div class="uk-comment">
+		<div class="uk-comment-header" style="margin-bottom:0">
+			<a target="_blank" href="/user/{ userId }"><img class="uk-comment-avatar uk-border-circle x-avatar" src="{ userImageUrl }" width="50" height="50" alt=""></a>
+			<h4 class="uk-comment-title"><a target="_blank" href="/discuss/{ boardId }/{ id }">{ name }</a></h4>
+			<div class="uk-comment-meta">
+				<a target="_blank" href="/user/{ userId }">{ userName }</a>
+				created at { createdAt.toSmartDate() }, Last updated at { updatedAt.toSmartDate() }
+				<span class="x-can-delete">
+                	[<a href="javascript:deleteTopic('{ id }')" class="uk-text-danger">Delete</a>]
+                	[<a href="javascript:deleteTopicAndLockUser('{ id }', '{ userId }')" class="uk-text-danger">Delete and Lock User</a>]
+                </span>
+			</div>
+		</div>
+		<div class="uk-comment-body x-auto-content">
+			{ content|raw }
+		</div>
+	</div>
+</script>
+
+
+<script id="tplCommentReply" type="text/plain">
+	<div class="uk-comment">
+		<div class="uk-comment-header" style="margin-bottom:0">
+			<a target="_blank" href="/user/{ userId }"><img class="uk-comment-avatar uk-border-circle x-avatar" src="{ userImageUrl }" width="50" height="50" alt=""></a>
+			<div class="uk-comment-meta"><a target="_blank" href="/user/{ userId }">{ userName }</a></div>
+			<div class="uk-comment-meta">
+				Created at { createdAt.toSmartDate() }
+				<span class="x-can-delete">
+                	[<a href="javascript:deleteReply('{ id }')" class="uk-text-danger">Delete</a>]
+                	[<a href="javascript:deleteReplyAndLockUser('{ id }', '{ userId }')" class="uk-text-danger">Delete and Lock User</a>]
+                </span>
+			</div>
+		</div>
+		<div class="uk-comment-body x-auto-content">
+			{ content|raw }
+		</div>
+	</div>
+</script>
+
+<script id="tplCommentInfo" type="text/plain">
+	<li>
+		<div class="x-comment-info">
+			<hr>
+			<a target="_blank" class="uk-button uk-button-small" href="/discuss/{ boardId }/{ id }"><i class="uk-icon-list-ul"></i> Full discussion</a>
+			&nbsp;
+			<a target="_blank" class="uk-button uk-button-small" href="/discuss/{ boardId }/{ id }#reply"><i class="uk-icon-reply"></i> Reply</a>
+		</div>
+	</li>
+</script>
+
+<script id="tplCommentArea" type="text/plain">
+	<div class="x-display-if-signin">
+		<p><button id="comment-make-button" type="button" class="uk-button uk-button-primary"><i class="uk-icon-comment"></i> Make a comment</button></p>
+		<form id="comment-form" class="uk-form" style="display:none;">
+			<fieldset>
+				<div class="uk-alert uk-alert-danger" style="display:none"></div>
+				<div class="uk-form-row">
+					<label>Title:</label>
+				</div>
+				<div class="uk-form-row">
+					<input type="text" name="name" maxlength="100" style="width:100%">
+				</div>
+				<div class="uk-form-row">
+					<label>Content:</label>
+				</div>
+				<div class="uk-form-row x-textarea">
+				</div>
+				<div class="uk-form-row">
+					<button type="submit" class="uk-button uk-button-primary"><i class="uk-icon-check"></i> Post</button>
+					&nbsp;&nbsp;
+					<button type="button" class="uk-button x-cancel"><i class="uk-icon-close"></i> Cancel</button>
+				</div>
+			</fieldset>
+		</form>
+	</div>
+</script>
+
+	<style id="x-doc-style">
+		.x-display-none { display: none; }
+		.x-display-if-signin { display: none; }
+		.x-can-delete {
+			display: none;
+		}
+	</style>
+
+	<script>
+		// global variables:
+		var g_time = parseFloat('1629553879890');
+		var g_user = null;
+
+	// init svg icons:
+	var g_icons = {
+	'1279465533472802':"<svg width=\"14px\" height=\"14px\" viewBox=\"0 0 50 50\">\n<path d=\"M 2.84375 3 C 1.285156 3 0 4.285156 0 5.84375 L 0 10.8125 C -0.00390625 10.855469 -0.00390625 10.894531 0 10.9375 L 0 46 C 0 46.550781 0.449219 47 1 47 L 49 47 C 49.550781 47 50 46.550781 50 46 L 50 11 C 50 10.96875 50 10.9375 50 10.90625 L 50 5.84375 C 50 4.285156 48.714844 3 47.15625 3 Z M 2.84375 5 L 47.15625 5 C 47.636719 5 48 5.363281 48 5.84375 L 48 10 L 2 10 L 2 5.84375 C 2 5.363281 2.363281 5 2.84375 5 Z M 2 12 L 48 12 L 48 45 L 2 45 Z M 14.90625 19.9375 C 14.527344 19.996094 14.214844 20.265625 14.101563 20.628906 C 13.988281 20.996094 14.09375 21.394531 14.375 21.65625 L 19.59375 27.03125 L 14.21875 32.25 C 13.820313 32.636719 13.816406 33.273438 14.203125 33.671875 C 14.589844 34.070313 15.226563 34.074219 15.625 33.6875 L 21.6875 27.75 L 22.40625 27.0625 L 21.71875 26.34375 L 15.78125 20.25 C 15.601563 20.058594 15.355469 19.949219 15.09375 19.9375 C 15.03125 19.929688 14.96875 19.929688 14.90625 19.9375 Z M 22.8125 32 C 22.261719 32.050781 21.855469 32.542969 21.90625 33.09375 C 21.957031 33.644531 22.449219 34.050781 23 34 L 36 34 C 36.359375 34.003906 36.695313 33.816406 36.878906 33.503906 C 37.058594 33.191406 37.058594 32.808594 36.878906 32.496094 C 36.695313 32.183594 36.359375 31.996094 36 32 L 23 32 C 22.96875 32 22.9375 32 22.90625 32 C 22.875 32 22.84375 32 22.8125 32 Z \"></path>\n</svg>",
+	'1279465562832930':"<svg width=\"14px\" height=\"14px\" viewBox=\"0 0 50 50\">\n<path d=\"M 12 2 C 8.6983746 2 6 4.6983746 6 8 L 6 42.417969 C 6 45.591903 8.832306 48 12 48 L 44 48 L 44 46 L 12 46 C 9.841694 46 8 44.378035 8 42.417969 C 8 40.457903 9.8001368 39 12 39 L 44 39 L 44 2 L 12 2 z M 12 4 L 42 4 L 42 37 L 12 37 C 10.506931 37 9.0923623 37.537598 8 38.417969 L 8 8 C 8 5.7796254 9.7796254 4 12 4 z M 15 9 C 13.906937 9 13 9.9069372 13 11 L 13 15 C 13 16.093063 13.906937 17 15 17 L 36 17 C 37.093063 17 38 16.093063 38 15 L 38 11 C 38 9.9069372 37.093063 9 36 9 L 15 9 z M 15 11 L 36 11 L 36 15 L 15 15 L 15 11 z\" />\n</svg>",
+	'1280137966387234':"<svg width=\"14px\" height=\"14px\" viewBox=\"0 0 350 350\">\n<path d=\"M247.436,288.6C264.658,282.791,350,250.865,350,188.814c0-38.818-15.299-56.129-49.605-56.129H10c-5.523,0-10,4.478-10,10\n\tv58.357c0,49.781,26.563,93.474,66.26,117.651H36.934c-5.523,0-10,4.478-10,10c0,5.523,4.478,10,10,10h100.719h3.646h100.728\n\tc5.522,0,10-4.477,10-10c0-5.522-4.478-10-10-10h-29.335C225.889,310.654,237.635,300.459,247.436,288.6z M278.95,201.042v-48.357\n\th21.444c20.473,0,29.605,5.217,29.605,36.129c0,33.839-37.13,57.706-64.039,70.559C274.286,241.65,278.95,221.882,278.95,201.042z\n\tM141.299,318.693h-3.646C72.778,318.693,20,265.916,20,201.042v-48.357h238.95v48.357\n\tC258.95,265.916,206.172,318.693,141.299,318.693z\"/>\n<path d=\"M99.31,89.238c1.401,0.677,2.883,0.997,4.342,0.997c3.717,0,7.287-2.082,9.012-5.653l28.454-58.926\n\tc2.401-4.974,0.316-10.952-4.656-13.353c-4.972-2.399-10.951-0.316-13.354,4.656L94.653,75.885\n\tC92.252,80.858,94.337,86.837,99.31,89.238z\"/>\n<path d=\"M162.497,89.238c1.401,0.677,2.883,0.997,4.342,0.997c3.717,0,7.287-2.082,9.012-5.653l28.455-58.926\n\tc2.401-4.974,0.317-10.952-4.656-13.353c-4.971-2.399-10.952-0.316-13.354,4.656l-28.455,58.926\n\tC155.439,80.858,157.523,86.837,162.497,89.238z\"/>\n</svg>",
+	'1279465671884834':"<svg width=\"14px\" height=\"14px\" viewBox=\"0 0 1024 1024\">\n<path d=\"M807.34208 238.46912H776.6016V183.27552c0-109.19936-85.54496-182.5792-212.8896-182.5792H453.8368c-127.32416 0-212.8896 73.35936-212.8896 182.5792v55.1936h-24.28928c-127.32416 0-212.8896 73.35936-212.8896 182.5792v200.82688c0 61.11232 27.648 163.6352 212.8896 163.6352h30.74048v55.21408c0 109.19936 85.56544 182.5792 212.8896 182.5792h109.8752c127.34464 0 212.8896-73.37984 212.8896-182.5792v-55.21408h24.28928c127.34464 0 212.8896-73.37984 212.8896-182.5792v-200.82688c0-61.11232-27.66848-163.6352-212.8896-163.6352zM249.89696 595.12832c-9.50272 40.71424-8.97024 45.50656-8.97024 68.44416v59.92448h-24.28928c-41.2672 0-150.87616 0-150.87616-101.62176v-200.82688c0-88.8832 77.9264-120.56576 150.87616-120.56576l238.24384-1.024v-59.37152h-151.94112V183.27552c0-88.8832 77.9264-120.56576 150.87616-120.56576h109.8752c72.94976 0 150.87616 31.66208 150.87616 120.56576v200.82688c0 6.92224-0.4096 14.29504-1.67936 21.79072-25.02656 63.7952-102.6048 71.92576-139.5712 71.92576 0 0-117.43232-0.08192-121.26208-0.14336-10.5472-0.2048-21.05344-0.43008-34.16064 0.6144-116.08064 11.4688-158.47424 76.12416-167.99744 116.8384z m708.32128 7.80288c0 88.8832-77.9264 120.56576-150.87616 120.56576l-251.392-0.88064v59.0848h165.08928v59.02336c0 88.8832-77.9264 120.56576-150.87616 120.56576h-109.8752c-72.92928 0-150.87616-31.68256-150.87616-120.56576v-200.84736c0-6.92224 0.4096-14.31552 1.67936-21.8112 25.02656-63.75424 102.58432-71.8848 139.55072-71.8848l134.32832 0.32768c6.53312 0 13.29152-0.18432 21.05344-0.8192 116.16256-11.4688 154.8288-70.81984 166.21568-122.01984a185.01632 185.01632 0 0 0 10.79296-63.26272v-59.92448h24.28928c41.2672 0 150.87616 0 150.87616 101.62176v200.82688z\" />\n<path d=\"M386.06848 170.02496m-33.46432 0a33.46432 33.46432 0 1 0 66.92864 0 33.46432 33.46432 0 1 0-66.92864 0Z\" />\n<path d=\"M636.33408 852.0704m-33.46432 0a33.46432 33.46432 0 1 0 66.92864 0 33.46432 33.46432 0 1 0-66.92864 0Z\" />\n</svg>",
+	'1279465705439266':"<svg width=\"14px\" height=\"14px\" viewBox=\"0 0 448 512\">\n<path d=\"M224 508c-6.7 0-13.5-1.8-19.4-5.2l-61.7-36.5c-9.2-5.2-4.7-7-1.7-8 12.3-4.3 14.8-5.2 27.9-12.7 1.4-.8 3.2-.5 4.6.4l47.4 28.1c1.7 1 4.1 1 5.7 0l184.7-106.6c1.7-1 2.8-3 2.8-5V149.3c0-2.1-1.1-4-2.9-5.1L226.8 37.7c-1.7-1-4-1-5.7 0L36.6 144.3c-1.8 1-2.9 3-2.9 5.1v213.1c0 2 1.1 4 2.9 4.9l50.6 29.2c27.5 13.7 44.3-2.4 44.3-18.7V167.5c0-3 2.4-5.3 5.4-5.3h23.4c2.9 0 5.4 2.3 5.4 5.3V378c0 36.6-20 57.6-54.7 57.6-10.7 0-19.1 0-42.5-11.6l-48.4-27.9C8.1 389.2.7 376.3.7 362.4V149.3c0-13.8 7.4-26.8 19.4-33.7L204.6 9c11.7-6.6 27.2-6.6 38.8 0l184.7 106.7c12 6.9 19.4 19.8 19.4 33.7v213.1c0 13.8-7.4 26.7-19.4 33.7L243.4 502.8c-5.9 3.4-12.6 5.2-19.4 5.2zm149.1-210.1c0-39.9-27-50.5-83.7-58-57.4-7.6-63.2-11.5-63.2-24.9 0-11.1 4.9-25.9 47.4-25.9 37.9 0 51.9 8.2 57.7 33.8.5 2.4 2.7 4.2 5.2 4.2h24c1.5 0 2.9-.6 3.9-1.7s1.5-2.6 1.4-4.1c-3.7-44.1-33-64.6-92.2-64.6-52.7 0-84.1 22.2-84.1 59.5 0 40.4 31.3 51.6 81.8 56.6 60.5 5.9 65.2 14.8 65.2 26.7 0 20.6-16.6 29.4-55.5 29.4-48.9 0-59.6-12.3-63.2-36.6-.4-2.6-2.6-4.5-5.3-4.5h-23.9c-3 0-5.3 2.4-5.3 5.3 0 31.1 16.9 68.2 97.8 68.2 58.4-.1 92-23.2 92-63.4z\"/>\n</svg>",
+	'1359943823261729':"<svg width=\"14px\" height=\"14px\" viewBox=\"0 0 24 24\">\n<line fill=\"none\" stroke=\"#000000\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" x1=\"9.188\" y1=\"1\" x2=\"9.188\" y2=\"23\"/>\n<line fill=\"none\" stroke=\"#000000\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" x1=\"12.812\" y1=\"19\" x2=\"12.812\" y2=\"23\"/>\n<line fill=\"none\" stroke=\"#000000\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" x1=\"12.812\" y1=\"1\" x2=\"12.812\" y2=\"5\"/>\n<path fill=\"none\" stroke=\"#000000\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M6,19h9.25 c1.934,0,3.5-1.566,3.5-3.5s-1.566-3.5-3.5-3.5H10h3.5c1.934,0,3.5-1.567,3.5-3.5S15.434,5,13.5,5H6\"/>\n</svg>",
+	'1279465629941794':"<svg width=\"14px\" height=\"14px\" viewBox=\"0 0 20 20\">\n<ellipse fill=\"none\" stroke=\"#000\" cx=\"10\" cy=\"4.64\" rx=\"7.5\" ry=\"3.14\"></ellipse>\n<path fill=\"none\" stroke=\"#000\" d=\"M17.5,8.11 C17.5,9.85 14.14,11.25 10,11.25 C5.86,11.25 2.5,9.84 2.5,8.11\"></path>\n<path fill=\"none\" stroke=\"#000\" d=\"M17.5,11.25 C17.5,12.99 14.14,14.39 10,14.39 C5.86,14.39 2.5,12.98 2.5,11.25\"></path>\n<path fill=\"none\" stroke=\"#000\" d=\"M17.49,4.64 L17.5,14.36 C17.5,16.1 14.14,17.5 10,17.5 C5.86,17.5 2.5,16.09 2.5,14.36 L2.5,4.64\"></path>\n</svg>",
+	'1279465600581666':"<svg width=\"14px\" height=\"14px\" viewBox=\"0 0 20 20\">\n<circle fill=\"none\" stroke=\"#000\" stroke-width=\"1.2\" cx=\"7\" cy=\"3\" r=\"2\"></circle>\n<circle fill=\"none\" stroke=\"#000\" stroke-width=\"1.2\" cx=\"14\" cy=\"6\" r=\"2\"></circle>\n<circle fill=\"none\" stroke=\"#000\" stroke-width=\"1.2\" cx=\"7\" cy=\"17\" r=\"2\"></circle>\n<path fill=\"none\" stroke=\"#000\" stroke-width=\"2\" d=\"M14,8 C14,10.41 12.43,10.87 10.56,11.25 C9.09,11.54 7,12.06 7,15 L7,5\"></path>\n</svg>",
+	'1279465764159522':"<svg width=\"14px\" height=\"14px\" viewBox=\"0 0 20 20\">\n<polygon fill=\"none\" stroke=\"#000\" points=\"1.5,1.5 18.5,1.5 18.5,13.5 10.5,13.5 6.5,17.5 6.5,13.5 1.5,13.5\"></polygon>\n<circle cx=\"10\" cy=\"8\" r=\"1\"></circle><circle cx=\"6\" cy=\"8\" r=\"1\"></circle><circle cx=\"14\" cy=\"8\" r=\"1\"></circle>\n</svg>",
+	'END':''
+	};
+	$(function () {
+		$('span.x-icon').each(function () {
+			var
+				$span = $(this),
+				iconId = $span.attr('data-id');
+			if (iconId) {
+				$span.html(g_icons[iconId]);
+			}
+		});
+		$(window).trigger('resize');
+	});
+
+	// init ads:
+	var g_ads = JSON.parse(decodeURIComponent('%7B%22slots%22%3A%5B%7B%22alias%22%3A%22a%22%2C%22width%22%3A336%2C%22height%22%3A280%2C%22numSlots%22%3A6%2C%22numAutoFill%22%3A2%2C%22adAutoFill%22%3A%22%3Cins%20class%3D%5C%22adsbygoogle%5C%22%20style%3D%5C%22display%3Ainline-block%3Bwidth%3A336px%3Bheight%3A280px%5C%22%20data-ad-client%3D%5C%22ca-pub-6727358730461554%5C%22%20data-ad-slot%3D%5C%228492060710%5C%22%3E%3C%2Fins%3E%5Cn%3Cscript%3E%5Cn%28adsbygoogle%20%3D%20window.adsbygoogle%20%7C%7C%20%5B%5D%29.push%28%7B%7D%29%3B%5Cn%3C%2Fscript%3E%22%2C%22periods%22%3A%5B%7B%22materials%22%3A%5B%7B%22imageId%22%3A1350324434501698%2C%22weight%22%3A100%2C%22tags%22%3A%5B%22%22%5D%2C%22url%22%3A%22https%3A%2F%2Fland.kaikeba.com%2Fa%2F114%22%7D%2C%7B%22imageId%22%3A1380928416907329%2C%22weight%22%3A100%2C%22tags%22%3A%5B%22Web%E3%80%81%E5%89%8D%E7%AB%AF%22%5D%2C%22url%22%3A%22http%3A%2F%2Fmp.weixin.qq.com%2Fs%3F__biz%3DMzI3MDE1MDA3Mg%3D%3D%26mid%3D100006770%26idx%3D4%26sn%3D45fc524d738776236f06129238a0dbd5%26chksm%3D6ad42ba55da3a2b3babb13b2b7d5dbbae3f72268aae87b6eafed67faa2074e188bad0d13787f%23rd%22%7D%2C%7B%22imageId%22%3A1380928882475041%2C%22weight%22%3A100%2C%22tags%22%3A%5B%22%E5%89%8D%E7%AB%AF%E3%80%81Web%22%5D%2C%22url%22%3A%22http%3A%2F%2Fmp.weixin.qq.com%2Fs%3F__biz%3DMzI3MDE1MDA3Mg%3D%3D%26mid%3D100006770%26idx%3D4%26sn%3D45fc524d738776236f06129238a0dbd5%26chksm%3D6ad42ba55da3a2b3babb13b2b7d5dbbae3f72268aae87b6eafed67faa2074e188bad0d13787f%23rd%22%7D%5D%7D%2C%7B%22materials%22%3A%5B%7B%22imageId%22%3A1382391264313377%2C%22weight%22%3A100%2C%22tags%22%3A%5B%22%22%5D%2C%22url%22%3A%22https%3A%2F%2Ft.1yb.co%2F9Lc4%22%7D%2C%7B%22imageId%22%3A1324238348746786%2C%22weight%22%3A100%2C%22tags%22%3A%5B%22Python%EF%BC%9BGit%EF%BC%9Bindex%22%5D%2C%22url%22%3A%22https%3A%2F%2Fmp.weixin.qq.com%2Fs%3F__biz%3DMzI5MjgwMDc4MQ%3D%3D%26mid%3D2247490055%26idx%3D1%26sn%3D71b00338a67b23a98e0c06614449e82f%26chksm%3Dec7a8a65db0d03739c825c85da76e515ef2dcc38ba6d2278b6d60ab47e4fc9301cbd8d64c048%26token%3D1481346959%26lang%3Dzh_CN%26utm_campaign%3DPC%26utm_medium%3Dcpc%26utm_source%3DPC%26gio_link_id%3DWoMNweE9%23rd%22%7D%2C%7B%22imageId%22%3A1380929043955745%2C%22weight%22%3A100%2C%22tags%22%3A%5B%22Web%E3%80%81%E5%89%8D%E7%AB%AF%22%5D%2C%22url%22%3A%22http%3A%2F%2Fmp.weixin.qq.com%2Fs%3F__biz%3DMzI3MDE1MDA3Mg%3D%3D%26mid%3D100006770%26idx%3D4%26sn%3D45fc524d738776236f06129238a0dbd5%26chksm%3D6ad42ba55da3a2b3babb13b2b7d5dbbae3f72268aae87b6eafed67faa2074e188bad0d13787f%23rd%22%7D%2C%7B%22imageId%22%3A1380928746160161%2C%22weight%22%3A100%2C%22tags%22%3A%5B%22%E5%89%8D%E7%AB%AF%E3%80%81Web%22%5D%2C%22url%22%3A%22http%3A%2F%2Fmp.weixin.qq.com%2Fs%3F__biz%3DMzI3MDE1MDA3Mg%3D%3D%26mid%3D100006770%26idx%3D4%26sn%3D45fc524d738776236f06129238a0dbd5%26chksm%3D6ad42ba55da3a2b3babb13b2b7d5dbbae3f72268aae87b6eafed67faa2074e188bad0d13787f%23rd%22%7D%5D%7D%2C%7B%22materials%22%3A%5B%7B%22imageId%22%3A1340345897975874%2C%22weight%22%3A100%2C%22tags%22%3A%5B%22python%22%2C%22git%22%2C%22index%22%5D%2C%22url%22%3A%22https%3A%2F%2Fmp.weixin.qq.com%2Fs%3F__biz%3DMzI5MjgwMDc4MQ%3D%3D%26mid%3D2247490055%26idx%3D1%26sn%3D71b00338a67b23a98e0c06614449e82f%26chksm%3Dec7a8a65db0d03739c825c85da76e515ef2dcc38ba6d2278b6d60ab47e4fc9301cbd8d64c048%26token%3D1481346959%26lang%3Dzh_CN%26utm_campaign%3DPC%26utm_medium%3Dcpc%26utm_source%3DPC%26gio_link_id%3DWoMNweE9%23rd%22%7D%2C%7B%22imageId%22%3A1382387902578722%2C%22weight%22%3A100%2C%22tags%22%3A%5B%22%E5%BB%96%E9%9B%AA%E5%B3%B0%E3%80%81C%2B%2B%E3%80%81%E8%83%A1%E8%88%B9%E9%95%BF%22%5D%2C%22url%22%3A%22https%3A%2F%2Ft.1yb.co%2F9Lc4%22%7D%2C%7B%22imageId%22%3A1380928700022817%2C%22weight%22%3A100%2C%22tags%22%3A%5B%22%E5%89%8D%E7%AB%AF%E3%80%81Web%22%5D%2C%22url%22%3A%22http%3A%2F%2Fmp.weixin.qq.com%2Fs%3F__biz%3DMzI3MDE1MDA3Mg%3D%3D%26mid%3D100006770%26idx%3D4%26sn%3D45fc524d738776236f06129238a0dbd5%26chksm%3D6ad42ba55da3a2b3babb13b2b7d5dbbae3f72268aae87b6eafed67faa2074e188bad0d13787f%23rd%22%7D%2C%7B%22imageId%22%3A1380928641302562%2C%22weight%22%3A100%2C%22tags%22%3A%5B%22Web%E3%80%81%E5%89%8D%E7%AB%AF%22%5D%2C%22url%22%3A%22http%3A%2F%2Fmp.weixin.qq.com%2Fs%3F__biz%3DMzI3MDE1MDA3Mg%3D%3D%26mid%3D100006770%26idx%3D4%26sn%3D45fc524d738776236f06129238a0dbd5%26chksm%3D6ad42ba55da3a2b3babb13b2b7d5dbbae3f72268aae87b6eafed67faa2074e188bad0d13787f%23rd%22%7D%5D%7D%5D%7D%2C%7B%22alias%22%3A%22b%22%2C%22width%22%3A300%2C%22height%22%3A600%2C%22numSlots%22%3A4%2C%22numAutoFill%22%3A2%2C%22adAutoFill%22%3A%22%3Cins%20class%3D%5C%22adsbygoogle%5C%22%20style%3D%5C%22display%3Ainline-block%3Bwidth%3A300px%3Bheight%3A600px%5C%22%20data-ad-client%3D%5C%22ca-pub-6727358730461554%5C%22%20data-ad-slot%3D%5C%224769867116%5C%22%3E%3C%2Fins%3E%5Cn%3Cscript%3E%5Cn%28adsbygoogle%20%3D%20window.adsbygoogle%20%7C%7C%20%5B%5D%29.push%28%7B%7D%29%3B%5Cn%3C%2Fscript%3E%22%2C%22periods%22%3A%5B%7B%22materials%22%3A%5B%7B%22imageId%22%3A1382391333519393%2C%22weight%22%3A100%2C%22tags%22%3A%5B%22%22%5D%2C%22url%22%3A%22https%3A%2F%2Ft.1yb.co%2F9Lc4%22%7D%2C%7B%22imageId%22%3A1367702604087361%2C%22weight%22%3A100%2C%22tags%22%3A%5B%22%E5%BB%96%E9%9B%AA%E5%B3%B0%20java%20%E7%89%A9%E8%81%94%E7%BD%91%20C%2B%2B%22%5D%2C%22url%22%3A%22https%3A%2F%2Fmp.weixin.qq.com%2Fs%2FKw_dZvhfqLdJbXUzUF1ZWw%22%7D%5D%7D%2C%7B%22materials%22%3A%5B%7B%22imageId%22%3A1382391360782370%2C%22weight%22%3A100%2C%22tags%22%3A%5B%22%22%5D%2C%22url%22%3A%22https%3A%2F%2Ft.1yb.co%2F9Lc4%22%7D%2C%7B%22imageId%22%3A1382391388045346%2C%22weight%22%3A100%2C%22tags%22%3A%5B%22%22%5D%2C%22url%22%3A%22https%3A%2F%2Ft.1yb.co%2F9Lc4%22%7D%5D%7D%5D%7D%5D%7D'));
+	$(function () {
+		initSponsors(g_ads);
+		console.log('init ad ok.');
+	});
+	</script>
+
+        <style>
+.x-wiki-visible {
+    display: block;
+}
+.x-can-edit {
+        display: none;
+    }
+</style>
+
+<script>
+
+loadComments('1017804782304672');
+
+var
+    comment_type = '1017804782304672' === '1016959663602400' ? 'wiki' : 'wikipage',
+    comment_ref_id = '1017804782304672',
+    comment_tag = 'python';
+
+function onAuthSuccess() {
+    initCommentArea(comment_type, comment_ref_id, comment_tag);
+}
+
+$(function () {
+    if (g_user !== null) {
+        initCommentArea(comment_type, comment_ref_id, comment_tag);
+    }
+});
+
+
+
+$(function () {
+    $('#1017804782304672').addClass('uk-active');
+    $('#off-1017804782304672').addClass('uk-active');
+    // expand current:
+    expandActiveNode();
+    // add prev, next:
+    $('div.x-wiki-prev-next').css('padding-left', '15px').css('padding-right', '15px');
+    var prev = getPrevNode();
+    var next = getNextNode();
+    if (prev) {
+        $('div.x-wiki-prev-next').append("<a href=\"" + prev.find("a").attr("href") + "\"><i class=\"uk-icon-chevron-left\"></i> Previous Page</a>");
+    }
+    if (next) {
+        $('div.x-wiki-prev-next').append("<a href=\"" + next.find("a").attr("href") + "\" class=\"uk-float-right\">Next Page <i class=\"uk-icon-chevron-right\"></i></a>");
+    }
+    $('div.x-wiki-prev-next').after('<hr>');
+});
+
+function getPrevNode() {
+    var activeNode = $('#1017804782304672');
+    var prev = activeNode.prev('div');
+    var lastChild;
+    if (prev.get(0)) {
+        lastChild = prev.find('div:last');
+        if (lastChild.get(0)) {
+            return lastChild;
+        }
+        return prev;
+    }
+    prev = activeNode.parent('div');
+    if (prev.get(0)) {
+        return prev;
+    }
+    return null;
+}
+
+function getNextNode() {
+    var activeNode = $('#1017804782304672');
+    var next = activeNode.find('div:first');
+    var node;
+    if (next.get(0)) {
+        return next;
+    }
+    next = activeNode.next('div');
+    if (next.get(0)) {
+        return next;
+    }
+    node = activeNode;
+    for (;;) {
+        node = node.parent('div');
+        if (node.get(0)) {
+            next = node.next('div');
+            if (next.get(0)) {
+                return next;
+            }
+        } else {
+            break;
+        }
+    }
+    return null;
+}
+
+function expandActiveNode() {
+    var activeNode = $('#1017804782304672');
+    for (;;) {
+        i = activeNode.find('i').get(0);
+        if (i) {
+            expandWikiNode(i);
+        }
+        activeNode = activeNode.parent();
+        if (! activeNode.is('div')) {
+            break;
+        }
+    }
+}
+
+function toggleWikiNode(icon) {
+    var
+        $i = $(icon),
+        $div = $i.parent(),
+        expand = $div.attr('expand');
+    if (expand === 'true') {
+        collapseWikiNode(icon);
+    } else {
+        expandWikiNode(icon);
+    }
+}
+
+function collapseWikiNode(icon, rec) {
+    var
+        $i = $(icon),
+        $div = $i.parent();
+    $div.attr('expand', 'false');
+    $i.removeClass('uk-icon-minus-square-o');
+    $i.addClass('uk-icon-plus-square-o');
+    $div.find('>div').hide();
+    if (rec) {
+        $div.find('>div>i').each(function () {
+            collapseWikiNode(this, rec);
+        });
+    }
+}
+
+function expandWikiNode(icon, rec) {
+    var
+        $i = $(icon),
+        $div = $i.parent();
+    $div.attr('expand', 'true');
+    $i.removeClass('uk-icon-plus-square-o');
+    $i.addClass('uk-icon-minus-square-o');
+    $div.find('>div').show();
+    if (rec) {
+        $div.find('>div>i').each(function () {
+            expandWikiNode(this, rec);
+        });
+    }
+}
+
+</script>
+
+<script>
+	console.log('init itranswarp ok.');
+</script>
+
+<!-- BEGIN custom_header -->
+<script src="//tjs.sjs.sinajs.cn/open/api/js/wb.js" type="text/javascript" charset="utf-8"></script>
+
+<script>
+if ($('meta[property="og:ad"]').attr('content') === 'true') {
+    var _tag = document.createElement('script');
+    _tag.type = 'text/javascript';
+    _tag.async = true;
+    _tag.src = '//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js';
+    $('head').append(_tag);
+}
+
+if (location.pathname.indexOf('/wiki/897692888725344')===0){
+  $(function () {
+    $('#x-content-top').append('<div class="uk-alert uk-alert-danger">您正在学习的Python 2.7教程已过期，请前往学习最新的<a href="/wiki/1016959663602400">Python 3.x教程</a></div>');
+  });
+}
+if (location.pathname.indexOf('/wiki/1207298049439968')===0){
+  $(function () {
+    $('#x-content-top').append('<div class="uk-alert uk-alert-danger"><i class="uk-icon-warning"></i> 请注意：此区块链教程为技术教程，教程的所有内容均不构成任何投资比特币或其他数字货币的意见和建议，也不赞成个人炒作任何数字货币！</div>');
+    $.ajax({ url: 'https://liaoxuefeng.gitee.io/resource.liaoxuefeng.com/js/blockchain-lib.js?v=1', dataType: 'script', cache: true });
+    $.ajax({ url: 'https://cdn.jsdelivr.net/npm/ethers@5.0.32/dist/ethers.umd.min.js', dataType: 'script', cache: true });
+  });
+}
+</script>
+
+<script>
+function shareToWeibo() {
+    var url = 'http://service.weibo.com/share/share.php?type=button&ralateUid=1658384301&language=zh_cn&appkey=1391944217&searchPic=false&style=full';
+    url = url + '&title=' + encodeURIComponent(document.title);
+    url = url + '&url=' + encodeURIComponent(location.href);
+    url = url + '&pic=' + encodeURIComponent($('meta[property="og:image"]').attr('content'));
+    window.open(url, 'share_liaoxuefeng_com', 'top=200,left=400,width=600,height=380,directories=no,menubar=no,toolbar=no,resizable=no');
+}
+
+var SHARE_TO_WEIBO = '<h3>还可以分享给朋友：</h3><p><a href="#0" onclick="shareToWeibo()" class="uk-button uk-button-danger"><i class="uk-icon-weibo"></i> 分享到微博</button></p>';
+
+var QRCODES = {
+    java: '<h3>读后有收获可以支付宝请作者喝咖啡，读后有疑问请加微信群讨论：</h3><p><img src="/files/attachments/1422670998536258/0"> <img src="/files/attachments/1283107900620866/0"</p>',
+    python: '<h3>读后有收获可以支付宝请作者喝咖啡，读后有疑问请加微信群讨论：</h3><p><img src="/files/attachments/1422670998536258/0"> <img src="/files/attachments/1283107913203778/0"</p>',
+    javascript: '<h3>读后有收获可以支付宝请作者喝咖啡，读后有疑问请加微信群讨论：</h3><p><img src="/files/attachments/1422670998536258/0"> <img src="/files/attachments/1283107885940801/0"</p>'
+};
+
+var ZAN_ONLY = '<h3>读后有收获可以支付宝请作者喝咖啡：</h3><p><img src="/files/attachments/1422670998536258/0"></p>';
+
+</script>
+
+<script>
+// add new:
+$(function () {
+  var img = '<img src="https://static.liaoxuefeng.com/files/attachments/1114079735783744/0" style="position:absolute;right:-10px;top:1px;z-index:100">';
+  $('#ul-navbar a[href="/wiki/1252599548343744"]').append(img);
+  $('#ul-navbar a[href="/wiki/1207298049439968"]').append(img);
+});
+</script>
+
+<script>
+  // sql: import alasql
+  if (location.pathname.indexOf('/wiki/1177760294764384') === 0) {
+    $.ajax({
+      url: 'https://liaoxuefeng.gitee.io/learning-js/jslib/alasql.js?v=1',
+      dataType: 'script',
+      cache: true,
+      success: function () {
+        console.log('alasql loaded.');
+        alasql.options.joinstar = 'underscore';
+        var
+          i,
+          classes_data = [['一班'], ['二班'], ['三班'], ['四班']],
+          students_data = [[1, '小明', 'M', 90], [1, '小红', 'F', 95], [1, '小军', 'M', 88], [1, '小米', 'F', 73], [2, '小白', 'F', 81], [2, '小兵', 'M', 55], [2, '小林', 'M', 85], [3, '小新', 'F', 91], [3, '小王', 'M', 89], [3, '小丽', 'F', 88]];
+        alasql('CREATE TABLE classes (id BIGINT NOT NULL AUTO_INCREMENT, name VARCHAR(10) NOT NULL, PRIMARY KEY (id))');
+        alasql('CREATE TABLE students (id BIGINT NOT NULL AUTO_INCREMENT, class_id BIGINT NOT NULL, name VARCHAR(10) NOT NULL, gender CHAR(1) NOT NULL, score BIGINT NOT NULL, PRIMARY KEY (id))');
+        for (i=0; i<classes_data.length; i++) {
+          alasql('INSERT INTO classes (name) VALUES (?)', classes_data[i]);
+        }
+        for (i=0; i<students_data.length; i++) {
+          alasql('INSERT INTO students (class_id, name, gender, score) VALUES (?, ?, ?, ?)', students_data[i]);
+        }
+      }
+    });
+  }
+</script>
+
+<script>
+// java practice:
+var giteelink = '<a href="https://gitee.com/" target="_blank"><img style="height:20px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAE4AAAAYCAMAAABjozvFAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAMAUExURf////zz8//9/f34+PXMzPbV1Pba2f////TJyPPFxf38+////wAAAMcdI7sAAMMADQEBAbgAALwAALoAALkAAL8AAMopLskgJsgiJ8cfJfbS0vzy8ckoLLMAAM87Pd3d3cgbInt7e8YPGnBwcMcXH4CAgL0AALcAAOB7et1tboWFhUNDQwcHB8MAD1ZWVsEAAdXV1cYMGb4AABQUFLUAAMQBEwMDA+Hh4aysrJ2dnTIyMh4eHvT09Ombmvn5+cDAwKGhofv7+7YAADQ0NN9yc/ro6aWlpcIACsAAABcXF5KSknd3d0dHRw0NDWxsbMMAC/G8vO+0syUlJcUUHBwcHEVFRVBQUPX19cQAEf7+/kBAQM7OzlNTU8AABsIABrQAAP329scRG8ssL91ubvPz86ioqOqfn8rKykJCQsXFxdvb25+fn6Kior29vQkJCZWVldtlZeKCgampqSYmJhEREQ8PD7e3tycnJ7S0tNFCROuhoP3y8pubm4yMjGZmZsjIyE1NTfLAwPrj5ImJicMHFe/v73FxcdHR0QwMDNra2uJ/fuypqNA/QJaWln5+fnR0dPnf3mNjY1lZWUtLS+qjopiYmCoqKsgjKNZUVeaQkDY2NiIiIs01OOrq6swvMsUKF8EABN92djw8POB7e8nJycojKM45PP3z8s87PvfX1u+0tMQEFOTk5IKCgu7u7tlhYeulpNhdXTg4OPfZ2PTNzPnf4BoaGqSkpPTKyuyoqMHBweyrrNfX1/Dw8E9PT8/Pz42Nja6uroiIiGFhYf37+ttkZHp6eufn5+SLi0FBQYaGhnNzc5mZmdpgYOB4d8IAEVhYWFJSUsklKcvLy8QPGvXR0OiYmbKyso+Pj7GxsdLS0nx8fMcXHhYWFv79/eB3d8EADOeUlPXT0uF6eV1dXeSKihISEsTExIODg9JHST4+Pvvv7/rn5/zx8NxpatJFRt1wcfvq6q4AAPjc2990dasAAMYbIddYWfXOze2ur++3t////uF+ff3399hbXMkeJnevGJYAAAALdFJOU/Ly8vLy8vLl8vLy6tdKuQAAA5RJREFUOMullWd4FFUUhhdRg55vNtsLapLVZXdJ7zFogBTSe4f0Qu8dlA4CAULvvXcQ7KiAXYqCgmLHCtbYu1ju3JnZzY/wrIHvx73n3Oebd55zq8pH5VaHmzrdcuPNquuQj4oUdd5iCQlLrzq78UQvalsHG8mbVArvjFFb/UbR+0UR6dqQhDato4aN7eGVJuFa1ifNMgtcVnNV0otteWOB0azbH+cV90K91rwqxKGWpEtzjmjD+1xwTk+i/rGagd5wrzpXmdU7fuva0JWpoWFBTE3C1b4YDNztBTfdabfoVntWoJ82JP1RJZk6O3vKM5Mzm2hD86QyGjgAmBboz8b7Twla+hZ3xGUFHRviwfVeoDMbN7Ls4l8S4ZLekjRSpi2EpHtoETCYpGQA0UweLGKOCbFilO3GPWwsEgzL6e8r/+70Y9rtt8MupFnu57RwoLi5BFjZTLlAIAXNBTLGD6ehQFToSqAH+QPDXgsC+iq4+/RCXfUe+rPG6LyDy2gSAnT5HPcS8A6RBq8Q3QW8R1QJsAWhEkSxthhZtAQaVvtaJCu4FL01onwP/aHb988Vl8u1bdvEciFAfYjjhgOTqUmDUxzXhSgUSCU6qkHUksrPLmMZnYRmaWVoBtBdxh3WCXf6dqa9hhh5vi5oGa4fD7snA6U5QJyCe12cQbFCSbmULEfrFNyDagmnj/m9tnYXY6zRu3E0SrSOFveGhFvGN8q9wRi7vWJ7eEUi9QEmzJka/m6jUuw8g1XEFTjqzPX1v5p+EHGCej6nPRCFz8su8tBdbC5LSqFJlf53mg+32ncF6gARd+RHvTM6+pd9LfSxQbA7HlFWNvuLhba35xA9D8wmyhQ3TTwdZ90Hhcgoo4NjgLnjAX8F1ytvlohb/P0Wl+vnlJ+IPtVbIyfKP5wmT80kCgTiiRofYkk3onHFfDeyEgd1E6Pgp92nYoShzneG56h88tEmS/RyKd6wNbikz1drNRhDNPRJPtTXdqCJdYmpWTb5hhlnsz2b6DlkMxyb8/Jv+7pF1K5vCjZFmnSmWsm5FetY2zsHj9H/kHwFJNREWE23c5mskdWmNMMTsoGtW2nmzEJgSDtwlBIdFuPLlVduP2fUHlEML/OJQeHj1B4cjVSr7dL9aYnQGp9qZTm/IjC+gqh9OJq+U2eI3FwV5tCGrV5M1yiV5+mh/G+/81u/+8sP36Rrl8qn9cN2a8cbVNf1MP4HCWMMeoGMWdIAAAAASUVORK5CYII="/></a>';
+if (location.pathname.indexOf('/wiki/1252599548343744') === 0) {
+    $(function () {
+        $('a').each(function () {
+            var
+                $a = $(this),
+                url = $a.attr('href');
+            if (url && url.indexOf('https://gitee.com/liaoxuefeng/learn-java/raw/master/practices/') === 0) {
+                var
+                    text = $a.text(),
+                    h = '从' + giteelink + '下载练习：<a href="' + url.replace(/\/raw/, '/blob') + '?utm_source=blog_lxf">' + text + '</a> （推荐使用<a target="_blank" href="/wiki/1252599548343744/1266092093733664">IDE练习插件</a>快速下载）';
+                $a.replaceWith(h);
+            }
+        });
+    });
+}
+
+if (location.pathname.indexOf('/wiki/896043488029600') === 0) {
+    $(function () {
+        $('#x-wiki-index #1163625339727712').prepend('<span style="position:absolute;margin-left:-1.1em;margin-top:3px;display:inline-block;width:16px;height:24px;background-repeat:no-repeat;background-size:contain;background-position:center;background-image:url(\'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAkCAMAAADW3miqAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAGJUExURQAAAMYcI8ccI8ccI8cdI8ccI8YcJcYcIsccI8wZJsYdI8YcIscdIscdI8QaIMcdI8QaJcYcIsYdI8YcJMYdI8YdI8ccI8YcI8YcIr8fH8QdJ8MeHsgkJMcdI8cdIsccIsccI8YcI8YdI8kfH8YdIsYcIsgdJMoeJf8AAMYdI8ccJMYdI8YdIsYeIskdIsccIsYcIsccIscbIsccIsccI8YcIsYcIsYdIsccIsYcIcUcIsYcI/8AAMcdIscdI8ccI8cdI8cdI8cdIscdI8YdI8geJMYcI8cdIscbIcYdI8cdIscbJcYcIscdI8YcHMYdIsYeJMYdIsUcJcccIsYcIsccIsccI8cdI8YcIsYdIskdI8MZIsYeIccdIscdIsYcI7YkJMYcIcccIsYdJMYcIskaIcccIsYdIscfH8ccI8YcIsYcI8ccI8YdIsccIsYcI8UfJMwzM8cdI8wZGcYcI8kaKMgcI8YcI8YdIsccIscdI8YcI8cdIccdI8weHsYcIsYdIsYdIscdIxtFXPcAAACCdFJOUwCWj7z81xve9xTZ1NvtJ9gwf6w/p3qz5rAIGhEOTvuF6bT+GL75RiIB2mrQjDs0+NVhJY7vdVrsxTZZhwKTybuBV+TKtlS6uFNWwTe50gmVVeM+fKvc4IB2ZyseRPKS5wdbWE36JuX0IO7x6HPizpAxBfYKkRN0vcfNcstFphmii5pZBD0wAAABdklEQVQ4y8XUZVfDMBQG4MAYg7lvjI0p7u7u7u7u7g795aS5bUiz7COH98v63vMsJ+lpi9D/JSfUOtdk6vDXtuSmIivuPIlmzCU0G5I2/q0kYvdJfPZ2OdMsibKjMaOSONuMmZhWp7EMNXkxuVt/UTuIE4c9/pGp5NZqwaNOatbA2ILaferl4bLa3MQcx7nDGOVpr1IC+QSd4cu3z+80JV/vsH45oG5odoSuBAecBZROSlY2QmEB8gLyknJzj9Ad/o0YDSTGU0BVzCnISnjN82v6SByQeSM0C4suuFsgrUOZZ5GNR3VQBlkkvUZ1ukf9A0XFgCY1CPJE0QCgaoouKXrBczO5CgOqoSikT+hwEs8OPD4CXqDssE9FmnQRY1TrlNwOuRfEBQt56MAp132WBMrAmIroaLUSd4vNoMa8qR5ghvnjcIpn3KPZQYPQOLiz9AvMUtLbGRzhiLlQ9J4PjTNkoaQtxSfDWu8s7Yn4TNHFij/6bv0A7Xb98tZz0gYAAAAASUVORK5CYII=\')"></span>');
+    });
+    $(function () {
+        $('.x-wiki-info').append('<div style="float:right"><a target="git-cheat-sheet" href="https://liaoxuefeng.gitee.io/resource.liaoxuefeng.com/git/git-cheat-sheet.html#" style="font-size:1.2em"><i class="uk-icon-info-circle"></i></a></div>');
+    });
+}
+</script>
+
+<script>
+// add share:
+$(function () {
+  if (location.pathname.indexOf('/wiki/')===0) {
+    var
+        tag = $('meta[property="og:tag"]').attr('content');
+        discuss = QRCODES[tag] || '',
+        zan = discuss === '' ? ZAN_ONLY : discuss;
+    $('.x-wiki-content').find('a[href^=http]').attr('target', '_blank');
+    $('.x-wiki-content').after(zan + SHARE_TO_WEIBO);
+  }
+});
+</script>
+
+<script>
+// article: add share:
+$(function () {
+  if (location.pathname.indexOf('/article/')===0) {
+    $('.x-article-content').find('a[href^=http]').attr('target', '_blank');
+    $('.x-article-content').after(ZAN_ONLY + SHARE_TO_WEIBO);
+  }
+});
+</script>
+
+<script>
+// footer:
+$(function() {
+  $('.x-footer-copyright').find('p').append('<br>本网站运行在<a target="_blank" href="https://promotion.aliyun.com/ntms/yunparter/invite.html?userCode=cz36baxa">阿里云</a>上并使用<a target="_blank" href="https://promotion.aliyun.com/ntms/yunparter/invite.html?userCode=cz36baxa">阿里云CDN</a>加速。');
+  $('.x-footer').append('<hr><div style="text-align:center"><p>本网站内容全部为原创，谢绝转载。友情链接: <a href="http://www.shi-ci.com" target="_blank">中华诗词</a> - <a href="https://promotion.aliyun.com/ntms/yunparter/invite.html?userCode=cz36baxa" target="_blank">阿里云</a> - <a href="http://mitpress.mit.edu/sites/default/files/sicp/full-text/book/book.html" target="_blank">SICP</a> - <a href="http://www.4clojure.com/" target="_blank">4clojure</a></p><p><a href="https://beian.miit.gov.cn" target="_blank">京ICP备13005808号-11</a></p></div>');
+});
+</script>
+
+<script>
+// tongji:
+var _hmt = _hmt || [];
+(function () {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?2efddd14a5f2b304677462d06fb4f964";
+  hm.async = "async";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+<!-- END custom_header -->
+
+<script>
+	console.log('init js ok.');
+</script>
+
+</head>
+
+<body>
+	<div class="x-goto-top">
+		<div class="x-arrow"></div>
+		<div class="x-stick"></div>
+	</div>
+
+	<div id="header" class="uk-navbar uk-navbar-attached">
+		<div class="uk-container x-container">
+			<div id="navbar" class="uk-navbar uk-navbar-attached">
+								<ul class="uk-navbar-nav uk-visible-small">
+					<li><a href="#0" onclick="UIkit.offcanvas.show('#x-offcanvas-left')">Index</a></li>
+				</ul>
+								<a id="brand" href="/" class="uk-navbar-brand uk-visible-large">廖雪峰的官方网站</a>
+				<a id="brand-small" href="/" class="uk-navbar-brand uk-hidden-large"><i class="uk-icon-home"></i></a>
+				<a class="uk-hidden" href="/blog/">Blog</a>
+				<ul id="ul-navbar" class="uk-navbar-nav uk-hidden-small">
+										<li class="x-nav"><a href="/category/895882450960192" ><span class="x-icon" data-id="1279465533472802"></span> 编程</a></li>
+										<li class="x-nav"><a href="/category/895882413934592" ><span class="x-icon" data-id="1279465562832930"></span> 读书</a></li>
+										<li class="x-nav"><a href="/wiki/1252599548343744" ><span class="x-icon" data-id="1280137966387234"></span> Java教程</a></li>
+										<li class="x-nav"><a href="/wiki/1016959663602400" ><span class="x-icon" data-id="1279465671884834"></span> Python教程</a></li>
+										<li class="x-nav"><a href="/wiki/1022910821149312" ><span class="x-icon" data-id="1279465705439266"></span> JavaScript教程</a></li>
+										<li class="x-nav"><a href="/wiki/1207298049439968" ><span class="x-icon" data-id="1359943823261729"></span> 区块链教程</a></li>
+										<li class="x-nav"><a href="/wiki/1177760294764384" ><span class="x-icon" data-id="1279465629941794"></span> SQL教程</a></li>
+										<li class="x-nav"><a href="/wiki/896043488029600" ><span class="x-icon" data-id="1279465600581666"></span> Git教程</a></li>
+										<li class="x-nav"><a href="/discuss" ><span class="x-icon" data-id="1279465764159522"></span> 问答</a></li>
+										<li id="navbar-more" class="uk-parent" data-uk-dropdown style="display:none">
+						<a href="#0"><i class="uk-icon-chevron-down"></i> More</a>
+						<div class="uk-dropdown uk-dropdown-navbar">
+							<ul id="ul-navbar-more" class="uk-nav uk-nav-navbar">
+																<li class="x-nav"><a href="/category/895882450960192" ><span class="x-icon" data-id="1279465533472802"></span> 编程</a></li>
+																<li class="x-nav"><a href="/category/895882413934592" ><span class="x-icon" data-id="1279465562832930"></span> 读书</a></li>
+																<li class="x-nav"><a href="/wiki/1252599548343744" ><span class="x-icon" data-id="1280137966387234"></span> Java教程</a></li>
+																<li class="x-nav"><a href="/wiki/1016959663602400" ><span class="x-icon" data-id="1279465671884834"></span> Python教程</a></li>
+																<li class="x-nav"><a href="/wiki/1022910821149312" ><span class="x-icon" data-id="1279465705439266"></span> JavaScript教程</a></li>
+																<li class="x-nav"><a href="/wiki/1207298049439968" ><span class="x-icon" data-id="1359943823261729"></span> 区块链教程</a></li>
+																<li class="x-nav"><a href="/wiki/1177760294764384" ><span class="x-icon" data-id="1279465629941794"></span> SQL教程</a></li>
+																<li class="x-nav"><a href="/wiki/896043488029600" ><span class="x-icon" data-id="1279465600581666"></span> Git教程</a></li>
+																<li class="x-nav"><a href="/discuss" ><span class="x-icon" data-id="1279465764159522"></span> 问答</a></li>
+															</ul>
+						</div>
+					</li>
+				</ul>
+				<ul id="ul-navbar-small" class="uk-navbar-nav uk-visible-small">
+					<li class="uk-parent" data-uk-dropdown>
+						<a href="#0"><i class="uk-icon-navicon"></i></a>
+						<div class="uk-dropdown uk-dropdown-navbar">
+							<ul class="uk-nav uk-nav-navbar">
+																<li><a href="/category/895882450960192" >编程</a></li>
+																<li><a href="/category/895882413934592" >读书</a></li>
+																<li><a href="/wiki/1252599548343744" >Java教程</a></li>
+																<li><a href="/wiki/1016959663602400" >Python教程</a></li>
+																<li><a href="/wiki/1022910821149312" >JavaScript教程</a></li>
+																<li><a href="/wiki/1207298049439968" >区块链教程</a></li>
+																<li><a href="/wiki/1177760294764384" >SQL教程</a></li>
+																<li><a href="/wiki/896043488029600" >Git教程</a></li>
+																<li><a href="/discuss" >问答</a></li>
+															</ul>
+						</div>
+					</li>
+				</ul>
+
+<!--
+				<div class="uk-navbar-content x-hidden-tiny">
+					<form id="form-search" class="uk-form uk-margin-remove uk-display-inline-block">
+						<div class="uk-form-icon">
+							<i class="uk-icon-search"></i>
+							<input type="text" placeholder="Search">
+						</div>
+					</form>
+				</div>
+-->
+
+				<div id="navbar-user-info" class="uk-navbar-flip">
+					<ul class="uk-navbar-nav">
+						<li class="uk-parent x-display-if-signin" data-uk-dropdown>
+							<a href="#0"><i class="uk-icon-user"></i><span class="x-hidden-tiny">&nbsp;</span><span class="x-user-name x-hidden-tiny"></span></a>
+							<div class="uk-dropdown uk-dropdown-navbar">
+								<ul class="uk-nav uk-nav-navbar">
+									<li><a target="_blank" href="/profile"><i class="uk-icon-cog"></i> Profile</a></li>
+									<li class="uk-nav-divider"></li>
+																									<li><a href="/auth/signout"><i class="uk-icon-power-off"></i> Sign Out</a></li>
+								</ul>
+							</div>
+						</li>
+						<li class="x-display-if-not-signin uk-hidden-small"><a href="/auth/signin"><i class="uk-icon-sign-in"></i> Sign In</a></li>
+						<li class="x-display-if-not-signin uk-visible-small"><a href="/auth/signin"><i class="uk-icon-sign-in"></i></a></li>
+						<li class="uk-parent" data-uk-dropdown>
+							<a href="#0"><i class="uk-icon-globe"></i></a>
+							<div class="uk-dropdown uk-dropdown-navbar">
+								<ul class="uk-nav uk-nav-navbar">
+																		<li><a href="/locale/en">English</a></li>
+																		<li><a href="/locale/zh_CN">简体中文</a></li>
+																	</ul>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div><!-- // header -->
+
+	<div id="main">
+		<div class="x-placeholder-50"><!-- placeholder --></div>
+		<div class="x-placeholder"><!-- placeholder --></div>
+		<div class="uk-container x-container">
+			<div class="uk-grid">
+				<div id="x-body-top" class="uk-width-1-1">
+					<!-- __snippet__.bodyTop -->
+										<!-- // __snippet__.bodyTop -->
+				</div>
+				<div class="uk-width-1-1">
+					<div class="uk-flex">
+												<div class="uk-flex-item-none x-sidebar-left">
+							<div id="x-sidebar-left">
+								<div id="x-sidebar-left-top">
+									<!-- __snippet__.sidebarLeftTop -->
+																		<!-- // __snippet__.sidebarLeftTop -->
+								</div>
+								<div id="x-sidebar-left-content" class="x-sidebar-left-content">
+									    <div class="uk-float-right" style="padding-top:5px">
+        <a href="#0" onclick="expandWikiNode($('#x-wiki-index>div>i').get(0), true)" style="margin-left:5px"><i class="uk-icon-expand"></i></a>
+        <a href="#0" onclick="collapseWikiNode($('#x-wiki-index>div>i').get(0), true);expandActiveNode()" style="margin-left:5px"><i class="uk-icon-dot-circle-o"></i></a>
+        <a href="#0" onclick="collapseWikiNode($('#x-wiki-index>div>i').get(0), true)" style="margin-left:5px"><i class="uk-icon-compress"></i></a>
+    </div>
+    <ul class="uk-nav uk-nav-side">
+        <li class="uk-nav-header">Index</li>
+    </ul>
+    <ul id="x-wiki-index" class="uk-nav uk-nav-side" style="margin-right:-15px;">
+        <div id="1016959663602400" depth="0" style="position:relative;margin-left:15px;">
+            <i onclick="toggleWikiNode(this)" class="uk-icon-plus-square-o" style="position:absolute;margin-left:-1em;padding-top:8px;"></i>
+            <a href="/wiki/1016959663602400" class="x-wiki-index-item">Python教程</a>
+                    	        <div id="1016959735620448" depth="1" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1016959735620448" class="x-wiki-index-item">Python简介</a>
+                    </div>
+                	        <div id="1016959856222624" depth="1" style="display:none;position:relative;margin-left:15px;">
+                          <i onclick="toggleWikiNode(this)" class="uk-icon-plus-square-o" style="position:absolute;margin-left:-1em;padding-top:8px;"></i>
+              <a href="/wiki/1016959663602400/1016959856222624" class="x-wiki-index-item">安装Python</a>
+                      	        <div id="1016966024263840" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1016966024263840" class="x-wiki-index-item">Python解释器</a>
+                    </div>
+                                </div>
+                	        <div id="1016966022717728" depth="1" style="display:none;position:relative;margin-left:15px;">
+                          <i onclick="toggleWikiNode(this)" class="uk-icon-plus-square-o" style="position:absolute;margin-left:-1em;padding-top:8px;"></i>
+              <a href="/wiki/1016959663602400/1016966022717728" class="x-wiki-index-item">第一个Python程序</a>
+                      	        <div id="1017024645952992" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017024645952992" class="x-wiki-index-item">使用文本编辑器</a>
+                    </div>
+                	        <div id="1018877595088352" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1018877595088352" class="x-wiki-index-item">Python代码运行助手</a>
+                    </div>
+                	        <div id="1017032074151456" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017032074151456" class="x-wiki-index-item">输入和输出</a>
+                    </div>
+                                </div>
+                	        <div id="1017063413904832" depth="1" style="display:none;position:relative;margin-left:15px;">
+                          <i onclick="toggleWikiNode(this)" class="uk-icon-plus-square-o" style="position:absolute;margin-left:-1em;padding-top:8px;"></i>
+              <a href="/wiki/1016959663602400/1017063413904832" class="x-wiki-index-item">Python基础</a>
+                      	        <div id="1017063826246112" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017063826246112" class="x-wiki-index-item">数据类型和变量</a>
+                    </div>
+                	        <div id="1017075323632896" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017075323632896" class="x-wiki-index-item">字符串和编码</a>
+                    </div>
+                	        <div id="1017092876846880" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017092876846880" class="x-wiki-index-item">使用list和tuple</a>
+                    </div>
+                	        <div id="1017099478626848" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017099478626848" class="x-wiki-index-item">条件判断</a>
+                    </div>
+                	        <div id="1017100774566304" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017100774566304" class="x-wiki-index-item">循环</a>
+                    </div>
+                	        <div id="1017104324028448" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017104324028448" class="x-wiki-index-item">使用dict和set</a>
+                    </div>
+                                </div>
+                	        <div id="1017105145133280" depth="1" style="display:none;position:relative;margin-left:15px;">
+                          <i onclick="toggleWikiNode(this)" class="uk-icon-plus-square-o" style="position:absolute;margin-left:-1em;padding-top:8px;"></i>
+              <a href="/wiki/1016959663602400/1017105145133280" class="x-wiki-index-item">函数</a>
+                      	        <div id="1017105451316128" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017105451316128" class="x-wiki-index-item">调用函数</a>
+                    </div>
+                	        <div id="1017106984190464" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017106984190464" class="x-wiki-index-item">定义函数</a>
+                    </div>
+                	        <div id="1017261630425888" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017261630425888" class="x-wiki-index-item">函数的参数</a>
+                    </div>
+                	        <div id="1017268131039072" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017268131039072" class="x-wiki-index-item">递归函数</a>
+                    </div>
+                                </div>
+                	        <div id="1017269809315232" depth="1" style="display:none;position:relative;margin-left:15px;">
+                          <i onclick="toggleWikiNode(this)" class="uk-icon-plus-square-o" style="position:absolute;margin-left:-1em;padding-top:8px;"></i>
+              <a href="/wiki/1016959663602400/1017269809315232" class="x-wiki-index-item">高级特性</a>
+                      	        <div id="1017269965565856" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017269965565856" class="x-wiki-index-item">切片</a>
+                    </div>
+                	        <div id="1017316949097888" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017316949097888" class="x-wiki-index-item">迭代</a>
+                    </div>
+                	        <div id="1017317609699776" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017317609699776" class="x-wiki-index-item">列表生成式</a>
+                    </div>
+                	        <div id="1017318207388128" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017318207388128" class="x-wiki-index-item">生成器</a>
+                    </div>
+                	        <div id="1017323698112640" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017323698112640" class="x-wiki-index-item">迭代器</a>
+                    </div>
+                                </div>
+                	        <div id="1017328525009056" depth="1" style="display:none;position:relative;margin-left:15px;">
+                          <i onclick="toggleWikiNode(this)" class="uk-icon-plus-square-o" style="position:absolute;margin-left:-1em;padding-top:8px;"></i>
+              <a href="/wiki/1016959663602400/1017328525009056" class="x-wiki-index-item">函数式编程</a>
+                      	        <div id="1017328655674400" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <i onclick="toggleWikiNode(this)" class="uk-icon-plus-square-o" style="position:absolute;margin-left:-1em;padding-top:8px;"></i>
+              <a href="/wiki/1016959663602400/1017328655674400" class="x-wiki-index-item">高阶函数</a>
+                      	        <div id="1017329367486080" depth="3" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017329367486080" class="x-wiki-index-item">map/reduce</a>
+                    </div>
+                	        <div id="1017404530360000" depth="3" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017404530360000" class="x-wiki-index-item">filter</a>
+                    </div>
+                	        <div id="1017408670135712" depth="3" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017408670135712" class="x-wiki-index-item">sorted</a>
+                    </div>
+                                </div>
+                	        <div id="1017434209254976" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017434209254976" class="x-wiki-index-item">返回函数</a>
+                    </div>
+                	        <div id="1017451447842528" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017451447842528" class="x-wiki-index-item">匿名函数</a>
+                    </div>
+                	        <div id="1017451662295584" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017451662295584" class="x-wiki-index-item">装饰器</a>
+                    </div>
+                	        <div id="1017454145929440" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017454145929440" class="x-wiki-index-item">偏函数</a>
+                    </div>
+                                </div>
+                	        <div id="1017454145014176" depth="1" style="display:none;position:relative;margin-left:15px;">
+                          <i onclick="toggleWikiNode(this)" class="uk-icon-plus-square-o" style="position:absolute;margin-left:-1em;padding-top:8px;"></i>
+              <a href="/wiki/1016959663602400/1017454145014176" class="x-wiki-index-item">模块</a>
+                      	        <div id="1017455068170048" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017455068170048" class="x-wiki-index-item">使用模块</a>
+                    </div>
+                	        <div id="1017493741106496" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017493741106496" class="x-wiki-index-item">安装第三方模块</a>
+                    </div>
+                                </div>
+                	        <div id="1017495723838528" depth="1" style="display:none;position:relative;margin-left:15px;">
+                          <i onclick="toggleWikiNode(this)" class="uk-icon-plus-square-o" style="position:absolute;margin-left:-1em;padding-top:8px;"></i>
+              <a href="/wiki/1016959663602400/1017495723838528" class="x-wiki-index-item">面向对象编程</a>
+                      	        <div id="1017496031185408" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017496031185408" class="x-wiki-index-item">类和实例</a>
+                    </div>
+                	        <div id="1017496679217440" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017496679217440" class="x-wiki-index-item">访问限制</a>
+                    </div>
+                	        <div id="1017497232674368" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017497232674368" class="x-wiki-index-item">继承和多态</a>
+                    </div>
+                	        <div id="1017499532944768" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017499532944768" class="x-wiki-index-item">获取对象信息</a>
+                    </div>
+                	        <div id="1017594591051072" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017594591051072" class="x-wiki-index-item">实例属性和类属性</a>
+                    </div>
+                                </div>
+                	        <div id="1017501628721248" depth="1" style="display:none;position:relative;margin-left:15px;">
+                          <i onclick="toggleWikiNode(this)" class="uk-icon-plus-square-o" style="position:absolute;margin-left:-1em;padding-top:8px;"></i>
+              <a href="/wiki/1016959663602400/1017501628721248" class="x-wiki-index-item">面向对象高级编程</a>
+                      	        <div id="1017501655757856" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017501655757856" class="x-wiki-index-item">使用__slots__</a>
+                    </div>
+                	        <div id="1017502538658208" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017502538658208" class="x-wiki-index-item">使用@property</a>
+                    </div>
+                	        <div id="1017502939956896" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017502939956896" class="x-wiki-index-item">多重继承</a>
+                    </div>
+                	        <div id="1017590712115904" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017590712115904" class="x-wiki-index-item">定制类</a>
+                    </div>
+                	        <div id="1017595944503424" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017595944503424" class="x-wiki-index-item">使用枚举类</a>
+                    </div>
+                	        <div id="1017592449371072" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017592449371072" class="x-wiki-index-item">使用元类</a>
+                    </div>
+                                </div>
+                	        <div id="1017598814713792" depth="1" style="display:none;position:relative;margin-left:15px;">
+                          <i onclick="toggleWikiNode(this)" class="uk-icon-plus-square-o" style="position:absolute;margin-left:-1em;padding-top:8px;"></i>
+              <a href="/wiki/1016959663602400/1017598814713792" class="x-wiki-index-item">错误、调试和测试</a>
+                      	        <div id="1017598873256736" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017598873256736" class="x-wiki-index-item">错误处理</a>
+                    </div>
+                	        <div id="1017602696742912" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017602696742912" class="x-wiki-index-item">调试</a>
+                    </div>
+                	        <div id="1017604210683936" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017604210683936" class="x-wiki-index-item">单元测试</a>
+                    </div>
+                	        <div id="1017605739507840" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017605739507840" class="x-wiki-index-item">文档测试</a>
+                    </div>
+                                </div>
+                	        <div id="1017606916795776" depth="1" style="display:none;position:relative;margin-left:15px;">
+                          <i onclick="toggleWikiNode(this)" class="uk-icon-plus-square-o" style="position:absolute;margin-left:-1em;padding-top:8px;"></i>
+              <a href="/wiki/1016959663602400/1017606916795776" class="x-wiki-index-item">IO编程</a>
+                      	        <div id="1017607179232640" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017607179232640" class="x-wiki-index-item">文件读写</a>
+                    </div>
+                	        <div id="1017609424203904" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017609424203904" class="x-wiki-index-item">StringIO和BytesIO</a>
+                    </div>
+                	        <div id="1017623135437088" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017623135437088" class="x-wiki-index-item">操作文件和目录</a>
+                    </div>
+                	        <div id="1017624706151424" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017624706151424" class="x-wiki-index-item">序列化</a>
+                    </div>
+                                </div>
+                	        <div id="1017627212385376" depth="1" style="display:none;position:relative;margin-left:15px;">
+                          <i onclick="toggleWikiNode(this)" class="uk-icon-plus-square-o" style="position:absolute;margin-left:-1em;padding-top:8px;"></i>
+              <a href="/wiki/1016959663602400/1017627212385376" class="x-wiki-index-item">进程和线程</a>
+                      	        <div id="1017628290184064" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017628290184064" class="x-wiki-index-item">多进程</a>
+                    </div>
+                	        <div id="1017629247922688" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017629247922688" class="x-wiki-index-item">多线程</a>
+                    </div>
+                	        <div id="1017630786314240" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017630786314240" class="x-wiki-index-item">ThreadLocal</a>
+                    </div>
+                	        <div id="1017631469467456" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017631469467456" class="x-wiki-index-item">进程 vs. 线程</a>
+                    </div>
+                	        <div id="1017631559645600" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017631559645600" class="x-wiki-index-item">分布式进程</a>
+                    </div>
+                                </div>
+                	        <div id="1017639890281664" depth="1" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017639890281664" class="x-wiki-index-item">正则表达式</a>
+                    </div>
+                	        <div id="1017642838127488" depth="1" style="display:none;position:relative;margin-left:15px;">
+                          <i onclick="toggleWikiNode(this)" class="uk-icon-plus-square-o" style="position:absolute;margin-left:-1em;padding-top:8px;"></i>
+              <a href="/wiki/1016959663602400/1017642838127488" class="x-wiki-index-item">常用内建模块</a>
+                      	        <div id="1017648783851616" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017648783851616" class="x-wiki-index-item">datetime</a>
+                    </div>
+                	        <div id="1017681679479008" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017681679479008" class="x-wiki-index-item">collections</a>
+                    </div>
+                	        <div id="1017684507717184" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017684507717184" class="x-wiki-index-item">base64</a>
+                    </div>
+                	        <div id="1017685387246080" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017685387246080" class="x-wiki-index-item">struct</a>
+                    </div>
+                	        <div id="1017686752491744" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017686752491744" class="x-wiki-index-item">hashlib</a>
+                    </div>
+                	        <div id="1183198304823296" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1183198304823296" class="x-wiki-index-item">hmac</a>
+                    </div>
+                	        <div id="1017783145987360" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017783145987360" class="x-wiki-index-item">itertools</a>
+                    </div>
+                	        <div id="1115615597164000" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1115615597164000" class="x-wiki-index-item">contextlib</a>
+                    </div>
+                	        <div id="1019223241745024" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1019223241745024" class="x-wiki-index-item">urllib</a>
+                    </div>
+                	        <div id="1017784095418144" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017784095418144" class="x-wiki-index-item">XML</a>
+                    </div>
+                	        <div id="1017784593019776" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017784593019776" class="x-wiki-index-item">HTMLParser</a>
+                    </div>
+                                </div>
+                	        <div id="1017785364772448" depth="1" style="display:none;position:relative;margin-left:15px;">
+                          <i onclick="toggleWikiNode(this)" class="uk-icon-plus-square-o" style="position:absolute;margin-left:-1em;padding-top:8px;"></i>
+              <a href="/wiki/1016959663602400/1017785364772448" class="x-wiki-index-item">常用第三方模块</a>
+                      	        <div id="1017785454949568" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017785454949568" class="x-wiki-index-item">Pillow</a>
+                    </div>
+                	        <div id="1183249464292448" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1183249464292448" class="x-wiki-index-item">requests</a>
+                    </div>
+                	        <div id="1183255880134144" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1183255880134144" class="x-wiki-index-item">chardet</a>
+                    </div>
+                	        <div id="1183565811281984" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1183565811281984" class="x-wiki-index-item">psutil</a>
+                    </div>
+                                </div>
+                	        <div id="1019273143120480" depth="1" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1019273143120480" class="x-wiki-index-item">virtualenv</a>
+                    </div>
+                	        <div id="1017786914566560" depth="1" style="display:none;position:relative;margin-left:15px;">
+                          <i onclick="toggleWikiNode(this)" class="uk-icon-plus-square-o" style="position:absolute;margin-left:-1em;padding-top:8px;"></i>
+              <a href="/wiki/1016959663602400/1017786914566560" class="x-wiki-index-item">图形界面</a>
+                      	        <div id="1249593505347328" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1249593505347328" class="x-wiki-index-item">海龟绘图</a>
+                    </div>
+                                </div>
+                	        <div id="1017787560490144" depth="1" style="display:none;position:relative;margin-left:15px;">
+                          <i onclick="toggleWikiNode(this)" class="uk-icon-plus-square-o" style="position:absolute;margin-left:-1em;padding-top:8px;"></i>
+              <a href="/wiki/1016959663602400/1017787560490144" class="x-wiki-index-item">网络编程</a>
+                      	        <div id="1017787663253120" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017787663253120" class="x-wiki-index-item">TCP/IP简介</a>
+                    </div>
+                	        <div id="1017788916649408" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017788916649408" class="x-wiki-index-item">TCP编程</a>
+                    </div>
+                	        <div id="1017790181885952" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017790181885952" class="x-wiki-index-item">UDP编程</a>
+                    </div>
+                                </div>
+                	        <div id="1017790556023936" depth="1" style="display:none;position:relative;margin-left:15px;">
+                          <i onclick="toggleWikiNode(this)" class="uk-icon-plus-square-o" style="position:absolute;margin-left:-1em;padding-top:8px;"></i>
+              <a href="/wiki/1016959663602400/1017790556023936" class="x-wiki-index-item">电子邮件</a>
+                      	        <div id="1017790702398272" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017790702398272" class="x-wiki-index-item">SMTP发送邮件</a>
+                    </div>
+                	        <div id="1017800447489504" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017800447489504" class="x-wiki-index-item">POP3收取邮件</a>
+                    </div>
+                                </div>
+                	        <div id="1017801397501728" depth="1" style="display:none;position:relative;margin-left:15px;">
+                          <i onclick="toggleWikiNode(this)" class="uk-icon-plus-square-o" style="position:absolute;margin-left:-1em;padding-top:8px;"></i>
+              <a href="/wiki/1016959663602400/1017801397501728" class="x-wiki-index-item">访问数据库</a>
+                      	        <div id="1017801751919456" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017801751919456" class="x-wiki-index-item">使用SQLite</a>
+                    </div>
+                	        <div id="1017802264972000" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017802264972000" class="x-wiki-index-item">使用MySQL</a>
+                    </div>
+                	        <div id="1017803857459008" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017803857459008" class="x-wiki-index-item">使用SQLAlchemy</a>
+                    </div>
+                                </div>
+                	        <div id="1017804650182592" depth="1" style="display:none;position:relative;margin-left:15px;">
+                          <i onclick="toggleWikiNode(this)" class="uk-icon-plus-square-o" style="position:absolute;margin-left:-1em;padding-top:8px;"></i>
+              <a href="/wiki/1016959663602400/1017804650182592" class="x-wiki-index-item">Web开发</a>
+                      	        <div id="1017804782304672" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017804782304672" class="x-wiki-index-item">HTTP协议简介</a>
+                    </div>
+                	        <div id="1017805396770016" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017805396770016" class="x-wiki-index-item">HTML简介</a>
+                    </div>
+                	        <div id="1017805733037760" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017805733037760" class="x-wiki-index-item">WSGI接口</a>
+                    </div>
+                	        <div id="1017806472608512" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017806472608512" class="x-wiki-index-item">使用Web框架</a>
+                    </div>
+                	        <div id="1017806952856928" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017806952856928" class="x-wiki-index-item">使用模板</a>
+                    </div>
+                                </div>
+                	        <div id="1017959540289152" depth="1" style="display:none;position:relative;margin-left:15px;">
+                          <i onclick="toggleWikiNode(this)" class="uk-icon-plus-square-o" style="position:absolute;margin-left:-1em;padding-top:8px;"></i>
+              <a href="/wiki/1016959663602400/1017959540289152" class="x-wiki-index-item">异步IO</a>
+                      	        <div id="1017968846697824" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017968846697824" class="x-wiki-index-item">协程</a>
+                    </div>
+                	        <div id="1017970488768640" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017970488768640" class="x-wiki-index-item">asyncio</a>
+                    </div>
+                	        <div id="1048430311230688" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1048430311230688" class="x-wiki-index-item">async/await</a>
+                    </div>
+                	        <div id="1017985577429536" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1017985577429536" class="x-wiki-index-item">aiohttp</a>
+                    </div>
+                                </div>
+                	        <div id="1346182154551329" depth="1" style="display:none;position:relative;margin-left:15px;">
+                          <i onclick="toggleWikiNode(this)" class="uk-icon-plus-square-o" style="position:absolute;margin-left:-1em;padding-top:8px;"></i>
+              <a href="/wiki/1016959663602400/1346182154551329" class="x-wiki-index-item">使用MicroPython</a>
+                      	        <div id="1346184849391649" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1346184849391649" class="x-wiki-index-item">搭建开发环境</a>
+                    </div>
+                	        <div id="1346290185142305" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1346290185142305" class="x-wiki-index-item">控制小车</a>
+                    </div>
+                	        <div id="1346302543659042" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1346302543659042" class="x-wiki-index-item">遥控小车</a>
+                    </div>
+                	        <div id="1346724956209185" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1346724956209185" class="x-wiki-index-item">遥控转向</a>
+                    </div>
+                                </div>
+                	        <div id="1018138095494592" depth="1" style="display:none;position:relative;margin-left:15px;">
+                          <i onclick="toggleWikiNode(this)" class="uk-icon-plus-square-o" style="position:absolute;margin-left:-1em;padding-top:8px;"></i>
+              <a href="/wiki/1016959663602400/1018138095494592" class="x-wiki-index-item">实战</a>
+                      	        <div id="1018138223191520" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1018138223191520" class="x-wiki-index-item">Day 1 - 搭建开发环境</a>
+                    </div>
+                	        <div id="1018139060027680" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1018139060027680" class="x-wiki-index-item">Day 2 - 编写Web App骨架</a>
+                    </div>
+                	        <div id="1018490605531840" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1018490605531840" class="x-wiki-index-item">Day 3 - 编写ORM</a>
+                    </div>
+                	        <div id="1018490658464544" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1018490658464544" class="x-wiki-index-item">Day 4 - 编写Model</a>
+                    </div>
+                	        <div id="1018490695712544" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1018490695712544" class="x-wiki-index-item">Day 5 - 编写Web框架</a>
+                    </div>
+                	        <div id="1018490750237280" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1018490750237280" class="x-wiki-index-item">Day 6 - 编写配置文件</a>
+                    </div>
+                	        <div id="1018490876604256" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1018490876604256" class="x-wiki-index-item">Day 7 - 编写MVC</a>
+                    </div>
+                	        <div id="1018490938509760" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1018490938509760" class="x-wiki-index-item">Day 8 - 构建前端</a>
+                    </div>
+                	        <div id="1018490989313088" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1018490989313088" class="x-wiki-index-item">Day 9 - 编写API</a>
+                    </div>
+                	        <div id="1018491031994656" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1018491031994656" class="x-wiki-index-item">Day 10 - 用户注册和登录</a>
+                    </div>
+                	        <div id="1018491069001760" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1018491069001760" class="x-wiki-index-item">Day 11 - 编写日志创建页</a>
+                    </div>
+                	        <div id="1018491118848608" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1018491118848608" class="x-wiki-index-item">Day 12 - 编写日志列表页</a>
+                    </div>
+                	        <div id="1018491156860224" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1018491156860224" class="x-wiki-index-item">Day 13 - 提升开发效率</a>
+                    </div>
+                	        <div id="1018491195171744" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1018491195171744" class="x-wiki-index-item">Day 14 - 完成Web App</a>
+                    </div>
+                	        <div id="1018491264935776" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1018491264935776" class="x-wiki-index-item">Day 15 - 部署Web App</a>
+                    </div>
+                	        <div id="1018491370993600" depth="2" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1018491370993600" class="x-wiki-index-item">Day 16 - 编写移动App</a>
+                    </div>
+                                </div>
+                	        <div id="1019418790329088" depth="1" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1019418790329088" class="x-wiki-index-item">FAQ</a>
+                    </div>
+                	        <div id="1018492034821792" depth="1" style="display:none;position:relative;margin-left:15px;">
+                          <a href="/wiki/1016959663602400/1018492034821792" class="x-wiki-index-item">期末总结</a>
+                    </div>
+                    </div>
+    </ul>
+    <div class="x-placeholder"></div>
+								</div>
+								<div id="x-sidebar-left-bottom">
+									<!-- __snippet__.sidebarLeftBottom -->
+									<h3>关于作者</h3>
+<p>关注公众号不定期领红包：</p>
+<p><img src="/files/attachments/1340208951853121/0"></p>
+<p>关注微博获取实时动态：</p>
+<iframe width="100%" height="90" class="share_self" frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=5&isTitle=0&noborder=0&isWeibo=0&isFans=0&uid=1658384301&verifier=078cedea&colors=0593d3,ffffff,666666,0593d3,0477ab&dpc=1"></iframe>
+<div id="sponsor-b"></div>
+									<!-- // __snippet__.sidebarLeftBottom -->
+								</div>
+							</div>
+						</div>
+												<div class="uk-flex-item-1" style="padding-left:15px; ">
+							<div id="x-content-top">
+								<!-- __snippet__.contentTop -->
+																<!-- // __snippet__.contentTop -->
+							</div>
+							<div id="x-content">
+								    <h4>HTTP协议简介</h4>
+    <div class="x-wiki-info">
+    	<span>Reads: 26266207</span>
+    	<a href="/manage/wiki/wikipage_update?id=1017804782304672" target="_blank" class="x-can-edit uk-text-danger">Edit</a></div>
+
+    <hr>
+
+    <div class="x-wiki-content x-main-content"><p>在Web应用中，服务器把网页传给浏览器，实际上就是把网页的HTML代码发送给浏览器，让浏览器显示出来。而浏览器和服务器之间的传输协议是HTTP，所以：</p>
+<ul>
+<li>
+<p>HTML是一种用来定义网页的文本，会HTML，就可以编写网页；</p>
+</li>
+<li>
+<p>HTTP是在网络上传输HTML的协议，用于浏览器和服务器的通信。</p>
+</li>
+</ul>
+<p>在举例子之前，我们需要安装Google的<a href="http://www.google.com/intl/zh-CN/chrome/">Chrome浏览器</a>。</p>
+<p>为什么要使用Chrome浏览器而不是IE呢？因为IE实在是太慢了，并且，IE对于开发和调试Web应用程序完全是一点用也没有。</p>
+<p>我们需要在浏览器很方便地调试我们的Web应用，而Chrome提供了一套完整地调试工具，非常适合Web开发。</p>
+<p>安装好Chrome浏览器后，打开Chrome，在菜单中选择“视图”，“开发者”，“开发者工具”，就可以显示开发者工具：</p>
+<p><img src="/static/img/loading.svg" data-src="/files/attachments/950415476737952" alt="chrome-dev-tools" /></p>
+<p><code>Elements</code>显示网页的结构，<code>Network</code>显示浏览器和服务器的通信。我们点<code>Network</code>，确保第一个小红灯亮着，Chrome就会记录所有浏览器和服务器之间的通信：</p>
+<p><img src="/static/img/loading.svg" data-src="/files/attachments/950415873256992" alt="chrome-devtools-network" /></p>
+<p>当我们在地址栏输入<code>www.sina.com.cn</code>时，浏览器将显示新浪的首页。在这个过程中，浏览器都干了哪些事情呢？通过<code>Network</code>的记录，我们就可以知道。在<code>Network</code>中，定位到第一条记录，点击，右侧将显示<code>Request Headers</code>，点击右侧的<code>view source</code>，我们就可以看到浏览器发给新浪服务器的请求：</p>
+<p><img src="/static/img/loading.svg" data-src="/files/attachments/950413532592512" alt="sina-http-request" /></p>
+<p>最主要的头两行分析如下，第一行：</p>
+<pre><code>GET / HTTP/1.1
+</code></pre>
+<p><code>GET</code>表示一个读取请求，将从服务器获得网页数据，<code>/</code>表示URL的路径，URL总是以<code>/</code>开头，<code>/</code>就表示首页，最后的<code>HTTP/1.1</code>指示采用的HTTP协议版本是1.1。目前HTTP协议的版本就是1.1，但是大部分服务器也支持1.0版本，主要区别在于1.1版本允许多个HTTP请求复用一个TCP连接，以加快传输速度。</p>
+<p>从第二行开始，每一行都类似于<code>Xxx: abcdefg</code>：</p>
+<pre><code>Host: www.sina.com.cn
+</code></pre>
+<p>表示请求的域名是<code>www.sina.com.cn</code>。如果一台服务器有多个网站，服务器就需要通过<code>Host</code>来区分浏览器请求的是哪个网站。</p>
+<p>继续往下找到<code>Response Headers</code>，点击<code>view source</code>，显示服务器返回的原始响应数据：</p>
+<p><img src="/static/img/loading.svg" data-src="/files/attachments/950413553562752" alt="sina-http-response" /></p>
+<p>HTTP响应分为Header和Body两部分（Body是可选项），我们在<code>Network</code>中看到的Header最重要的几行如下：</p>
+<pre><code>200 OK
+</code></pre>
+<p><code>200</code>表示一个成功的响应，后面的<code>OK</code>是说明。失败的响应有<code>404 Not Found</code>：网页不存在，<code>500 Internal Server Error</code>：服务器内部出错，等等。</p>
+<pre><code>Content-Type: text/html
+</code></pre>
+<p><code>Content-Type</code>指示响应的内容，这里是<code>text/html</code>表示HTML网页。请注意，浏览器就是依靠<code>Content-Type</code>来判断响应的内容是网页还是图片，是视频还是音乐。浏览器并不靠URL来判断响应的内容，所以，即使URL是<code>http://example.com/abc.jpg</code>，它也不一定就是图片。</p>
+<p>HTTP响应的Body就是HTML源码，我们在菜单栏选择“视图”，“开发者”，“查看网页源码”就可以在浏览器中直接查看HTML源码：</p>
+<p><img src="/static/img/loading.svg" data-src="/files/attachments/950413570828960" alt="sina-http-source" /></p>
+<p>当浏览器读取到新浪首页的HTML源码后，它会解析HTML，显示页面，然后，根据HTML里面的各种链接，再发送HTTP请求给新浪服务器，拿到相应的图片、视频、Flash、JavaScript脚本、CSS等各种资源，最终显示出一个完整的页面。所以我们在<code>Network</code>下面能看到很多额外的HTTP请求。</p>
+<h3>HTTP请求</h3>
+<p>跟踪了新浪的首页，我们来总结一下HTTP请求的流程：</p>
+<p>步骤1：浏览器首先向服务器发送HTTP请求，请求包括：</p>
+<p>方法：<code>GET</code>还是<code>POST</code>，<code>GET</code>仅请求资源，<code>POST</code>会附带用户数据；</p>
+<p>路径：<code>/full/url/path</code>；</p>
+<p>域名：由Host头指定：<code>Host: www.sina.com.cn</code></p>
+<p>以及其他相关的Header；</p>
+<p>如果是POST，那么请求还包括一个Body，包含用户数据。</p>
+<p>步骤2：服务器向浏览器返回HTTP响应，响应包括：</p>
+<p>响应代码：<code>200</code>表示成功，<code>3xx</code>表示重定向，<code>4xx</code>表示客户端发送的请求有错误，<code>5xx</code>表示服务器端处理时发生了错误；</p>
+<p>响应类型：由<code>Content-Type</code>指定，例如：<code>Content-Type: text/html;charset=utf-8</code>表示响应类型是HTML文本，并且编码是<code>UTF-8</code>，<code>Content-Type: image/jpeg</code>表示响应类型是JPEG格式的图片；</p>
+<p>以及其他相关的Header；</p>
+<p>通常服务器的HTTP响应会携带内容，也就是有一个Body，包含响应的内容，网页的HTML源码就在Body中。</p>
+<p>步骤3：如果浏览器还需要继续向服务器请求其他资源，比如图片，就再次发出HTTP请求，重复步骤1、2。</p>
+<p>Web采用的HTTP协议采用了非常简单的请求-响应模式，从而大大简化了开发。当我们编写一个页面时，我们只需要在HTTP响应中把HTML发送出去，不需要考虑如何附带图片、视频等，浏览器如果需要请求图片和视频，它会发送另一个HTTP请求，因此，一个HTTP请求只处理一个资源。</p>
+<p>HTTP协议同时具备极强的扩展性，虽然浏览器请求的是<code>http://www.sina.com.cn/</code>的首页，但是新浪在HTML中可以链入其他服务器的资源，比如<code>&lt;img src=&quot;http://i1.sinaimg.cn/home/2013/1008/U8455P30DT20131008135420.png&quot;&gt;</code>，从而将请求压力分散到各个服务器上，并且，一个站点可以链接到其他站点，无数个站点互相链接起来，就形成了World Wide Web，简称“三达不溜”（WWW）。</p>
+<h3>HTTP格式</h3>
+<p>每个HTTP请求和响应都遵循相同的格式，一个HTTP包含Header和Body两部分，其中Body是可选的。</p>
+<p>HTTP协议是一种文本协议，所以，它的格式也非常简单。HTTP GET请求的格式：</p>
+<pre><code>GET /path HTTP/1.1
+Header1: Value1
+Header2: Value2
+Header3: Value3
+</code></pre>
+<p>每个Header一行一个，换行符是<code>\r\n</code>。</p>
+<p>HTTP POST请求的格式：</p>
+<pre><code>POST /path HTTP/1.1
+Header1: Value1
+Header2: Value2
+Header3: Value3
+
+body data goes here...
+</code></pre>
+<p>当遇到连续两个<code>\r\n</code>时，Header部分结束，后面的数据全部是Body。</p>
+<p>HTTP响应的格式：</p>
+<pre><code>200 OK
+Header1: Value1
+Header2: Value2
+Header3: Value3
+
+body data goes here...
+</code></pre>
+<p>HTTP响应如果包含body，也是通过<code>\r\n\r\n</code>来分隔的。请再次注意，Body的数据类型由<code>Content-Type</code>头来确定，如果是网页，Body就是文本，如果是图片，Body就是图片的二进制数据。</p>
+<p>当存在<code>Content-Encoding</code>时，Body数据是被压缩的，最常见的压缩方式是gzip，所以，看到<code>Content-Encoding: gzip</code>时，需要将Body数据先解压缩，才能得到真正的数据。压缩的目的在于减少Body的大小，加快网络传输。</p>
+<p>要详细了解HTTP协议，推荐“<a href="http://shop.oreilly.com/product/9781565925090.do">HTTP: The Definitive Guide</a>”一书，非常不错，有中文译本：</p>
+<p><a href="http://t.cn/R7FguRq">HTTP权威指南</a></p>
+</div>
+
+    <hr>
+
+    <div class="x-wiki-prev-next uk-clearfix"></div>
+
+    <div class="x-anchor x-comment-anchor"><a name="comments"></a></div>
+							</div>
+							<div id="x-content-bottom">
+								<!-- __snippet__.contentBottom -->
+								<div id="sponsor-a" class="uk-margin-bottom"></div>
+								<!-- // __snippet__.contentBottom -->
+							</div>
+							<div id="x-content-comment">
+								    <h3>Comments</h3>
+
+    <ul id="x-comment-list" class="uk-comment-list">
+    </ul>
+
+    <h3>Make a comment</h3>
+
+    <div class="x-display-if-not-signin">
+        <p><button type="button" class="uk-button" onclick="showSignin()"><i class="uk-icon-signin"></i> Sign in to make a comment</button></p>
+    </div>
+
+    <div id="x-comment-area"></div>
+
+							</div>
+						</div>
+											</div>
+				</div>
+
+				<div id="x-body-bottom" class="uk-width-1-1">
+					<!-- __snippet__.bodyBottom -->
+										<!-- // __snippet__.bodyBottom -->
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="x-offcanvas-left" class="uk-offcanvas">
+		<div class="uk-offcanvas-bar">
+			<div class="uk-panel">
+				    <ul class="uk-nav uk-nav-side">
+        <li class="uk-nav-header">Index</li>
+    </ul>
+    <ul class="uk-nav uk-nav-side">
+        <li id="off-1016959663602400"><a href="/wiki/1016959663602400">Python教程</a></li>
+                	    <li id="off-1016959735620448" style="margin-left:1em;">
+	        <a href="/wiki/1016959663602400/1016959735620448">Python简介</a>
+	    </li>
+	                	    <li id="off-1016959856222624" style="margin-left:1em;">
+	        <a href="/wiki/1016959663602400/1016959856222624">安装Python</a>
+	    </li>
+	    	                	    <li id="off-1016966024263840" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1016966024263840">Python解释器</a>
+	    </li>
+	            	                	    <li id="off-1016966022717728" style="margin-left:1em;">
+	        <a href="/wiki/1016959663602400/1016966022717728">第一个Python程序</a>
+	    </li>
+	    	                	    <li id="off-1017024645952992" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017024645952992">使用文本编辑器</a>
+	    </li>
+	                	    <li id="off-1018877595088352" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1018877595088352">Python代码运行助手</a>
+	    </li>
+	                	    <li id="off-1017032074151456" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017032074151456">输入和输出</a>
+	    </li>
+	            	                	    <li id="off-1017063413904832" style="margin-left:1em;">
+	        <a href="/wiki/1016959663602400/1017063413904832">Python基础</a>
+	    </li>
+	    	                	    <li id="off-1017063826246112" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017063826246112">数据类型和变量</a>
+	    </li>
+	                	    <li id="off-1017075323632896" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017075323632896">字符串和编码</a>
+	    </li>
+	                	    <li id="off-1017092876846880" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017092876846880">使用list和tuple</a>
+	    </li>
+	                	    <li id="off-1017099478626848" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017099478626848">条件判断</a>
+	    </li>
+	                	    <li id="off-1017100774566304" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017100774566304">循环</a>
+	    </li>
+	                	    <li id="off-1017104324028448" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017104324028448">使用dict和set</a>
+	    </li>
+	            	                	    <li id="off-1017105145133280" style="margin-left:1em;">
+	        <a href="/wiki/1016959663602400/1017105145133280">函数</a>
+	    </li>
+	    	                	    <li id="off-1017105451316128" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017105451316128">调用函数</a>
+	    </li>
+	                	    <li id="off-1017106984190464" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017106984190464">定义函数</a>
+	    </li>
+	                	    <li id="off-1017261630425888" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017261630425888">函数的参数</a>
+	    </li>
+	                	    <li id="off-1017268131039072" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017268131039072">递归函数</a>
+	    </li>
+	            	                	    <li id="off-1017269809315232" style="margin-left:1em;">
+	        <a href="/wiki/1016959663602400/1017269809315232">高级特性</a>
+	    </li>
+	    	                	    <li id="off-1017269965565856" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017269965565856">切片</a>
+	    </li>
+	                	    <li id="off-1017316949097888" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017316949097888">迭代</a>
+	    </li>
+	                	    <li id="off-1017317609699776" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017317609699776">列表生成式</a>
+	    </li>
+	                	    <li id="off-1017318207388128" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017318207388128">生成器</a>
+	    </li>
+	                	    <li id="off-1017323698112640" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017323698112640">迭代器</a>
+	    </li>
+	            	                	    <li id="off-1017328525009056" style="margin-left:1em;">
+	        <a href="/wiki/1016959663602400/1017328525009056">函数式编程</a>
+	    </li>
+	    	                	    <li id="off-1017328655674400" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017328655674400">高阶函数</a>
+	    </li>
+	    	                	    <li id="off-1017329367486080" style="margin-left:3em;">
+	        <a href="/wiki/1016959663602400/1017329367486080">map/reduce</a>
+	    </li>
+	                	    <li id="off-1017404530360000" style="margin-left:3em;">
+	        <a href="/wiki/1016959663602400/1017404530360000">filter</a>
+	    </li>
+	                	    <li id="off-1017408670135712" style="margin-left:3em;">
+	        <a href="/wiki/1016959663602400/1017408670135712">sorted</a>
+	    </li>
+	            	                	    <li id="off-1017434209254976" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017434209254976">返回函数</a>
+	    </li>
+	                	    <li id="off-1017451447842528" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017451447842528">匿名函数</a>
+	    </li>
+	                	    <li id="off-1017451662295584" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017451662295584">装饰器</a>
+	    </li>
+	                	    <li id="off-1017454145929440" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017454145929440">偏函数</a>
+	    </li>
+	            	                	    <li id="off-1017454145014176" style="margin-left:1em;">
+	        <a href="/wiki/1016959663602400/1017454145014176">模块</a>
+	    </li>
+	    	                	    <li id="off-1017455068170048" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017455068170048">使用模块</a>
+	    </li>
+	                	    <li id="off-1017493741106496" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017493741106496">安装第三方模块</a>
+	    </li>
+	            	                	    <li id="off-1017495723838528" style="margin-left:1em;">
+	        <a href="/wiki/1016959663602400/1017495723838528">面向对象编程</a>
+	    </li>
+	    	                	    <li id="off-1017496031185408" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017496031185408">类和实例</a>
+	    </li>
+	                	    <li id="off-1017496679217440" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017496679217440">访问限制</a>
+	    </li>
+	                	    <li id="off-1017497232674368" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017497232674368">继承和多态</a>
+	    </li>
+	                	    <li id="off-1017499532944768" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017499532944768">获取对象信息</a>
+	    </li>
+	                	    <li id="off-1017594591051072" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017594591051072">实例属性和类属性</a>
+	    </li>
+	            	                	    <li id="off-1017501628721248" style="margin-left:1em;">
+	        <a href="/wiki/1016959663602400/1017501628721248">面向对象高级编程</a>
+	    </li>
+	    	                	    <li id="off-1017501655757856" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017501655757856">使用__slots__</a>
+	    </li>
+	                	    <li id="off-1017502538658208" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017502538658208">使用@property</a>
+	    </li>
+	                	    <li id="off-1017502939956896" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017502939956896">多重继承</a>
+	    </li>
+	                	    <li id="off-1017590712115904" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017590712115904">定制类</a>
+	    </li>
+	                	    <li id="off-1017595944503424" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017595944503424">使用枚举类</a>
+	    </li>
+	                	    <li id="off-1017592449371072" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017592449371072">使用元类</a>
+	    </li>
+	            	                	    <li id="off-1017598814713792" style="margin-left:1em;">
+	        <a href="/wiki/1016959663602400/1017598814713792">错误、调试和测试</a>
+	    </li>
+	    	                	    <li id="off-1017598873256736" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017598873256736">错误处理</a>
+	    </li>
+	                	    <li id="off-1017602696742912" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017602696742912">调试</a>
+	    </li>
+	                	    <li id="off-1017604210683936" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017604210683936">单元测试</a>
+	    </li>
+	                	    <li id="off-1017605739507840" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017605739507840">文档测试</a>
+	    </li>
+	            	                	    <li id="off-1017606916795776" style="margin-left:1em;">
+	        <a href="/wiki/1016959663602400/1017606916795776">IO编程</a>
+	    </li>
+	    	                	    <li id="off-1017607179232640" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017607179232640">文件读写</a>
+	    </li>
+	                	    <li id="off-1017609424203904" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017609424203904">StringIO和BytesIO</a>
+	    </li>
+	                	    <li id="off-1017623135437088" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017623135437088">操作文件和目录</a>
+	    </li>
+	                	    <li id="off-1017624706151424" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017624706151424">序列化</a>
+	    </li>
+	            	                	    <li id="off-1017627212385376" style="margin-left:1em;">
+	        <a href="/wiki/1016959663602400/1017627212385376">进程和线程</a>
+	    </li>
+	    	                	    <li id="off-1017628290184064" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017628290184064">多进程</a>
+	    </li>
+	                	    <li id="off-1017629247922688" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017629247922688">多线程</a>
+	    </li>
+	                	    <li id="off-1017630786314240" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017630786314240">ThreadLocal</a>
+	    </li>
+	                	    <li id="off-1017631469467456" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017631469467456">进程 vs. 线程</a>
+	    </li>
+	                	    <li id="off-1017631559645600" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017631559645600">分布式进程</a>
+	    </li>
+	            	                	    <li id="off-1017639890281664" style="margin-left:1em;">
+	        <a href="/wiki/1016959663602400/1017639890281664">正则表达式</a>
+	    </li>
+	                	    <li id="off-1017642838127488" style="margin-left:1em;">
+	        <a href="/wiki/1016959663602400/1017642838127488">常用内建模块</a>
+	    </li>
+	    	                	    <li id="off-1017648783851616" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017648783851616">datetime</a>
+	    </li>
+	                	    <li id="off-1017681679479008" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017681679479008">collections</a>
+	    </li>
+	                	    <li id="off-1017684507717184" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017684507717184">base64</a>
+	    </li>
+	                	    <li id="off-1017685387246080" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017685387246080">struct</a>
+	    </li>
+	                	    <li id="off-1017686752491744" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017686752491744">hashlib</a>
+	    </li>
+	                	    <li id="off-1183198304823296" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1183198304823296">hmac</a>
+	    </li>
+	                	    <li id="off-1017783145987360" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017783145987360">itertools</a>
+	    </li>
+	                	    <li id="off-1115615597164000" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1115615597164000">contextlib</a>
+	    </li>
+	                	    <li id="off-1019223241745024" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1019223241745024">urllib</a>
+	    </li>
+	                	    <li id="off-1017784095418144" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017784095418144">XML</a>
+	    </li>
+	                	    <li id="off-1017784593019776" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017784593019776">HTMLParser</a>
+	    </li>
+	            	                	    <li id="off-1017785364772448" style="margin-left:1em;">
+	        <a href="/wiki/1016959663602400/1017785364772448">常用第三方模块</a>
+	    </li>
+	    	                	    <li id="off-1017785454949568" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017785454949568">Pillow</a>
+	    </li>
+	                	    <li id="off-1183249464292448" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1183249464292448">requests</a>
+	    </li>
+	                	    <li id="off-1183255880134144" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1183255880134144">chardet</a>
+	    </li>
+	                	    <li id="off-1183565811281984" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1183565811281984">psutil</a>
+	    </li>
+	            	                	    <li id="off-1019273143120480" style="margin-left:1em;">
+	        <a href="/wiki/1016959663602400/1019273143120480">virtualenv</a>
+	    </li>
+	                	    <li id="off-1017786914566560" style="margin-left:1em;">
+	        <a href="/wiki/1016959663602400/1017786914566560">图形界面</a>
+	    </li>
+	    	                	    <li id="off-1249593505347328" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1249593505347328">海龟绘图</a>
+	    </li>
+	            	                	    <li id="off-1017787560490144" style="margin-left:1em;">
+	        <a href="/wiki/1016959663602400/1017787560490144">网络编程</a>
+	    </li>
+	    	                	    <li id="off-1017787663253120" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017787663253120">TCP/IP简介</a>
+	    </li>
+	                	    <li id="off-1017788916649408" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017788916649408">TCP编程</a>
+	    </li>
+	                	    <li id="off-1017790181885952" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017790181885952">UDP编程</a>
+	    </li>
+	            	                	    <li id="off-1017790556023936" style="margin-left:1em;">
+	        <a href="/wiki/1016959663602400/1017790556023936">电子邮件</a>
+	    </li>
+	    	                	    <li id="off-1017790702398272" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017790702398272">SMTP发送邮件</a>
+	    </li>
+	                	    <li id="off-1017800447489504" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017800447489504">POP3收取邮件</a>
+	    </li>
+	            	                	    <li id="off-1017801397501728" style="margin-left:1em;">
+	        <a href="/wiki/1016959663602400/1017801397501728">访问数据库</a>
+	    </li>
+	    	                	    <li id="off-1017801751919456" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017801751919456">使用SQLite</a>
+	    </li>
+	                	    <li id="off-1017802264972000" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017802264972000">使用MySQL</a>
+	    </li>
+	                	    <li id="off-1017803857459008" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017803857459008">使用SQLAlchemy</a>
+	    </li>
+	            	                	    <li id="off-1017804650182592" style="margin-left:1em;">
+	        <a href="/wiki/1016959663602400/1017804650182592">Web开发</a>
+	    </li>
+	    	                	    <li id="off-1017804782304672" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017804782304672">HTTP协议简介</a>
+	    </li>
+	                	    <li id="off-1017805396770016" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017805396770016">HTML简介</a>
+	    </li>
+	                	    <li id="off-1017805733037760" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017805733037760">WSGI接口</a>
+	    </li>
+	                	    <li id="off-1017806472608512" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017806472608512">使用Web框架</a>
+	    </li>
+	                	    <li id="off-1017806952856928" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017806952856928">使用模板</a>
+	    </li>
+	            	                	    <li id="off-1017959540289152" style="margin-left:1em;">
+	        <a href="/wiki/1016959663602400/1017959540289152">异步IO</a>
+	    </li>
+	    	                	    <li id="off-1017968846697824" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017968846697824">协程</a>
+	    </li>
+	                	    <li id="off-1017970488768640" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017970488768640">asyncio</a>
+	    </li>
+	                	    <li id="off-1048430311230688" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1048430311230688">async/await</a>
+	    </li>
+	                	    <li id="off-1017985577429536" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1017985577429536">aiohttp</a>
+	    </li>
+	            	                	    <li id="off-1346182154551329" style="margin-left:1em;">
+	        <a href="/wiki/1016959663602400/1346182154551329">使用MicroPython</a>
+	    </li>
+	    	                	    <li id="off-1346184849391649" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1346184849391649">搭建开发环境</a>
+	    </li>
+	                	    <li id="off-1346290185142305" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1346290185142305">控制小车</a>
+	    </li>
+	                	    <li id="off-1346302543659042" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1346302543659042">遥控小车</a>
+	    </li>
+	                	    <li id="off-1346724956209185" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1346724956209185">遥控转向</a>
+	    </li>
+	            	                	    <li id="off-1018138095494592" style="margin-left:1em;">
+	        <a href="/wiki/1016959663602400/1018138095494592">实战</a>
+	    </li>
+	    	                	    <li id="off-1018138223191520" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1018138223191520">Day 1 - 搭建开发环境</a>
+	    </li>
+	                	    <li id="off-1018139060027680" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1018139060027680">Day 2 - 编写Web App骨架</a>
+	    </li>
+	                	    <li id="off-1018490605531840" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1018490605531840">Day 3 - 编写ORM</a>
+	    </li>
+	                	    <li id="off-1018490658464544" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1018490658464544">Day 4 - 编写Model</a>
+	    </li>
+	                	    <li id="off-1018490695712544" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1018490695712544">Day 5 - 编写Web框架</a>
+	    </li>
+	                	    <li id="off-1018490750237280" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1018490750237280">Day 6 - 编写配置文件</a>
+	    </li>
+	                	    <li id="off-1018490876604256" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1018490876604256">Day 7 - 编写MVC</a>
+	    </li>
+	                	    <li id="off-1018490938509760" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1018490938509760">Day 8 - 构建前端</a>
+	    </li>
+	                	    <li id="off-1018490989313088" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1018490989313088">Day 9 - 编写API</a>
+	    </li>
+	                	    <li id="off-1018491031994656" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1018491031994656">Day 10 - 用户注册和登录</a>
+	    </li>
+	                	    <li id="off-1018491069001760" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1018491069001760">Day 11 - 编写日志创建页</a>
+	    </li>
+	                	    <li id="off-1018491118848608" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1018491118848608">Day 12 - 编写日志列表页</a>
+	    </li>
+	                	    <li id="off-1018491156860224" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1018491156860224">Day 13 - 提升开发效率</a>
+	    </li>
+	                	    <li id="off-1018491195171744" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1018491195171744">Day 14 - 完成Web App</a>
+	    </li>
+	                	    <li id="off-1018491264935776" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1018491264935776">Day 15 - 部署Web App</a>
+	    </li>
+	                	    <li id="off-1018491370993600" style="margin-left:2em;">
+	        <a href="/wiki/1016959663602400/1018491370993600">Day 16 - 编写移动App</a>
+	    </li>
+	            	                	    <li id="off-1019418790329088" style="margin-left:1em;">
+	        <a href="/wiki/1016959663602400/1019418790329088">FAQ</a>
+	    </li>
+	                	    <li id="off-1018492034821792" style="margin-left:1em;">
+	        <a href="/wiki/1016959663602400/1018492034821792">期末总结</a>
+	    </li>
+	                </ul>
+    <div class="x-placeholder"></div>
+			</div>
+		</div>
+	</div>
+
+	<div id="footer">
+		<div class="x-footer uk-container x-container">
+			<hr>
+			<div class="uk-grid">
+				<div class="x-footer-copyright uk-width-small-1-2 uk-width-medium-1-3">
+					<p>
+						<a href="/" title="version=1.0-78696de-2020-04-10T02:25:52Z">廖雪峰的官方网站</a> &copy;Copyright 2019-2021						<br>
+						Powered by <a href="https://github.com/michaelliao/itranswarp" target="_blank">iTranswarp</a>
+					</p>
+				</div>
+				<div class="uk-width-small-1-2 uk-width-medium-1-3 x-hidden-tiny">
+									<a href="https://github.com/michaelliao" target="_blank" class="uk-icon-button uk-icon-github"></a>
+									<a href="https://twitter.com/liaoxuefeng" target="_blank" class="uk-icon-button uk-icon-twitter"></a>
+									<a href="https://weibo.com/liaoxuefeng" target="_blank" class="uk-icon-button uk-icon-weibo"></a>
+								</div>
+				<div class="uk-width-medium-1-3 uk-hidden-small">
+					<p>
+						<a href="https://github.com/michaelliao/itranswarp/issues" target="_blank">Feedback</a>
+						<br>
+						<a href="https://github.com/michaelliao/itranswarp/blob/master/LICENSE" target="_blank">License</a>
+					</p>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

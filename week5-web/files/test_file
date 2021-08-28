@@ -1,0 +1,9 @@
+name account#
+mike $1,500
+kevin 1000
+
+URI -> http://ip:port/folder1/subfolder2/.../filename.json
+https://www.liaoxuefeng.com/wiki/1016959663602400/1017804782304672
+(protocol)://www.liaoxuefeng.com/
+
+192.168.4.16
