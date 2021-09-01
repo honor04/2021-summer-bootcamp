@@ -43,6 +43,6 @@ def test_upsert_rate():
 
 # DO NOT DELETE
 if __name__ == '__main__':
-    test_get_rate()
-    # test_upsert_rate()
+    # test_get_rate()
+    test_upsert_rate()
     # you can add your test functions here
