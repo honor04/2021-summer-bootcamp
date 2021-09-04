@@ -42,11 +42,10 @@ def get_client_rate(client_id):
     :param client_id: str
     :return: http response
     """
-    import pandas as pd
-    df = pd.read_json("client_rate.json")
-    df_dict = df.to_dict()
+    client_dict = get_client_rates()
+    res = str(client_id) + " - "  + str(client_dict[client_id]['rate'])
     # How to get the actual rate from client_id?
-    return df_dict[client_id]
+    return res
 # -- TODO END: Part 1
 
 
@@ -58,21 +57,16 @@ def upsert_client_rate():
 
     :return: http response.
     """
-
-    name = request.json
-    # We want to update if the client exist in the client_rate.json data
-    update_client_rates(name.values().index(0), name[0])
-    # Or insert a new client-rate pair into client_rate.json data
-
     print(request)
-
+    new_client_dict = request.json
+    new_client_dict_keys = new_client_dict.keys()
+    new_client_dict_values = new_client_dict.values()
+    # We want to update if the client exist in the client_rate.json data
+    update_client_rates(new_client_dict_keys[0], new_client_dict_values[0])
+    # Or insert a new client-rate pair into client_rate.json data
     # After getting post request - how to update json file?
     return request.get_json()
 
-def rewrite_json_file(filepath, json_data):
-    with open(filepath, 'w') as f:
-        json.dump(json_data, f)
-    f.close()
 
 def update_client_rates(client_id: str, rate: float):
     """
@@ -85,18 +79,11 @@ def update_client_rates(client_id: str, rate: float):
     import pandas as pd
     df = pd.read_json("client_rate.json")
     df_dict = df.to_dict()
-    if client_id in df_dict:
-        df_dict[client_id] = rate
-        rewrite_json_file("client_rate.json", df_dict)
-        return "Client_id Exist Rate Updated"
-    else:
-        df_dict[client_id] = rate
-        rewrite_json_file("client_rate.json", df_dict)
-        return "Client_id Not Exist Rate Inserted"
+    df_dict[str(client_id)]['rate'] = rate
+
     # check if exist
     # replace or add client rate
     # re-write the file
-    pass
 # -- TODO END: Part 4
 
 
