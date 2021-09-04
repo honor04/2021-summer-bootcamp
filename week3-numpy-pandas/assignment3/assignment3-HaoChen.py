@@ -15,8 +15,11 @@ cross(x, y)
 """
 import pandas as pd
 import numpy as np
-def crossproduct (x:list, y:list):
+
+
+def crossproduct(x: list, y: list):
     return [x[1] * y[2] - y[1] * x[2], - x[0] * y[2] + y[0] * x[2], x[0] * y[1] - y[0] * x[1]]
+
 
 print(crossproduct([1, 2, 0], [4, 5, 6]))
 # Q2.
@@ -37,25 +40,25 @@ print(crossproduct([1, 2, 0], [4, 5, 6]))
 写一个python 程序来进行验证。
 """
 
-def check(order: str) -> bool:
-    s_l = "(" in order
-    s_r = ")" in order
-    m_l = "[" in order
-    m_r = "]" in order
-    l_l = "{" in order
-    l_r = "}" in order
-    s = not (s_r ^ s_l)
-    m = not (m_r ^ m_l)
-    l = not (l_r ^ l_l)
-    return s and m and l
 
-def checkOrders(orders: [str]) -> [bool]:
-    for i in range(len(orders)):
-        orders[i] = check(orders[i])
-    return orders
+def check_orders(orders: [str]) -> [bool]:
+    formal = {")": "(", "}": "{", "]": "["}  # reverse look up
+    return [check_order(o, formal) for o in orders]
 
 
-print(checkOrders(["()", "(", "{}[]", "[][][]", "[{]{]"]))
+def check_order(order: str, formal: {str: str}) -> bool:
+    stack = []
+    for i in order:
+        if i in formal:
+            if len(stack) == 0 or stack.pop() != formal[i]:
+                return False
+        else:
+            stack.append(i)
+    return len(stack) == 0
+
+
+assert check_orders(["()", "(", "{}[]", "[][][]", "[{]{]"]) == [True, False, True, True, False]
+
 
 
 # Q3
@@ -74,19 +77,19 @@ Broker 4 使用了25-19=6s
 Broker 2 使用了35-25=10s
 综合表现，是broker2出现了最慢的交易表现。
 """
+
+
 def slowest(orders: [[int]]) -> int:
     i = len(orders) - 1
     while i > 0:
-        orders[i][1] = orders[i][1] - orders[i-1][1]
+        orders[i][1] = orders[i][1] - orders[i - 1][1]
         i -= 1
     df = pd.DataFrame(orders, columns=['id', 'time'])
-    df_sum = df.groupby('id').sum()
-    print(df_sum)
-    min = df_sum.idxmin()
-    return df_sum.iloc[min, 0]
-print(slowest([[0, 2], [1, 5], [2, 7], [0, 16], [3, 19], [4, 25], [2, 35]]))
+    max = df.idxmax()['time']
+    return df.iloc[max, 0]
 
 
+assert slowest([[0, 2], [1, 5], [2, 7], [0, 16], [3, 19], [4, 25], [2, 35]]) == 2
 
 # Q4
 """
@@ -101,7 +104,9 @@ print(slowest([[0, 2], [1, 5], [2, 7], [0, 16], [3, 19], [4, 25], [2, 35]]))
 3. moves = "RRDD", return False.
 4. moves = "LDRRLRUULR", return False.
 """
-def judgeRobotMove (moves: str) -> bool:
+
+
+def judgeRobotMove(moves: str) -> bool:
     u = moves.count("U")
     d = moves.count("D")
     l = moves.count("L")
@@ -109,10 +114,10 @@ def judgeRobotMove (moves: str) -> bool:
     v = u == d
     p = l == r
     return v and p
-print(judgeRobotMove("UD"))
-print(judgeRobotMove("LL"))
-print(judgeRobotMove("RRDD"))
-print(judgeRobotMove("LDRRLRUULR"))
+
+
+assert not judgeRobotMove("LDRRLRUULR")
+assert judgeRobotMove("UD")
 # Q5
 """
 写一个验证email格式的程序， 对于给定的string监查是不是一个email地址:
@@ -123,20 +128,25 @@ print(judgeRobotMove("LDRRLRUULR"))
 
 可以使用regex或者python标准包的方法。
 """
-def JudgeEmail (email: str) -> bool:
+
+
+def JudgeEmail(email: str) -> bool:
     num = [chr(a) for a in range(97, 123)]
     low_letter = [chr(b) for b in range(48, 58)]
-    sym = ["-", "/" , "." , "_", "@"]
+    sym = ["-", "/", ".", "_", "@"]
     for i in range(len(email)):
         if email[i] in num + low_letter + sym:
             if email[i] == '@':
-                three = not(email[i-1] == ' ' and email[i+1] == ' ')
+                check_between = not (email[i - 1] == ' ' and email[i + 1] == ' ')
             continue
         else:
             return False
-    two = email.count('@') == 1
-    four = email[-4::] == ".edu" or email[-4::] == ".com"
-    return two and three and four
+    check_at = email.count('@') == 1
+    check_end = email[-4::] == ".edu" or email[-4::] == ".com"
+    return check_at and check_between and check_end
 
-print(JudgeEmail("1a_@.com"))
-
+assert not JudgeEmail("Mike@cnn.com")
+assert not JudgeEmail("mike@ny@times.com")
+assert not JudgeEmail("mike@ nytimes.com")
+assert not JudgeEmail("mike@nytimes.org")
+assert JudgeEmail("mike@nyu.edu")
