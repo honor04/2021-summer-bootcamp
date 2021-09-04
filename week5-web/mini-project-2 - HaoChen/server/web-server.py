@@ -62,7 +62,11 @@ def upsert_client_rate():
     new_client_dict_keys = new_client_dict.keys()
     new_client_dict_values = new_client_dict.values()
     # We want to update if the client exist in the client_rate.json data
-    update_client_rates(new_client_dict_keys[0], new_client_dict_values[0])
+    for i in range(1, len(new_client_dict)+1):
+        if new_client_dict_keys[i] is None or new_client_dict_values[i] is None:
+            continue
+        else:
+            update_client_rates(new_client_dict_keys[i], new_client_dict_values[i])
     # Or insert a new client-rate pair into client_rate.json data
     # After getting post request - how to update json file?
     return request.get_json()
@@ -76,10 +80,17 @@ def update_client_rates(client_id: str, rate: float):
     :param rate: float, e.g. 0.1
     :return:
     """
+
     import pandas as pd
     df = pd.read_json("client_rate.json")
     df_dict = df.to_dict()
-    df_dict[str(client_id)]['rate'] = rate
+    if client_id in df_dict:
+        df_dict[str(client_id)]['rate'] = rate
+    else:
+        df_dict[str(client_id)]['rate'] = rate
+    df_dict.to_json("client_rate.json")
+
+
 
     # check if exist
     # replace or add client rate
